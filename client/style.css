@@ -1,0 +1,201 @@
+/*************************************************************************
+ * LEARNINFI CONFIDENTIAL
+ * ___________________
+ *
+ *  Copyright 2018 Pronovate Technologies Pvt. Ltd.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Pronovate Technologies Pvt. Ltd. and its 
+ * suppliers, if any. The intellectual and technical concepts 
+ * contained herein are proprietary to Pronovate Technologies Pvt. 
+ * Ltd. and its suppliers and are protected by all applicable 
+ * intellectual property laws, including trade secret and copyright laws.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Pronovate Technologies Pvt. Ltd.
+ **************************************************************************/
+
+/*hide video controls in the fullscreen mode*/
+video::-webkit-media-controls-enclosure {
+  display:none !important;
+}
+
+body {
+  margin: 0px;
+  background: #dbdbdb;
+}
+
+.video-call-container {
+  background: white;
+  width: 298px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+/*all video should fill parent*/
+.video-call-container video {
+  width: 100%;
+  height: 100%;
+}
+
+/******* peer container *******/
+.peers-container {
+  position: relative;
+  border-bottom: 1px solid #eee;
+  padding: 3px;
+  height: 101px;
+}
+
+.peers-container h2 {
+    font-size: 16px;
+    font-family: 'Ubuntu',sans-serif;
+    color: #aaa;
+    text-align: center;
+    font-weight: 300;
+    position: relative;
+    top: 25px;
+}
+
+.peer-videos-container {
+  position: absolute !important;
+  width: calc(100% - 50px);
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+
+.overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1;
+  border-radius: 9px;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+i.play-btn {
+  position: absolute;
+  top: 79%;
+  left: 85%;
+  transform: translateX(-50%) translateY(-50%);
+  font-size: 60px;
+  color: #DCDCDC;
+}
+
+i.volume-icon {
+  position: absolute;
+  color: #514f4f;
+  font-size: 35px;
+  top: 15px;
+  right: 15px;
+  visibility: hidden;
+}
+
+i.user-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  font-size: 155px;
+  color: #dcdcdc;
+}
+
+
+
+.main-container {
+  padding-top: 5px;
+}
+
+
+.small-video {
+  background: #eee;
+  border-radius: 3px;
+  width: calc(100% - 5px) !important;
+  position: relative;
+  cursor: pointer;
+  height: 60px;
+}
+
+.small-video i.user-icon {
+  font-size: 40px;
+}
+
+.small-video i.volume-icon {
+  font-size: 13px;
+  top: 7px;
+  right: 7px;
+}
+
+.small-video i.play-btn {
+  font-size: 20px;
+}
+
+.small-video .overlay {
+  border-radius: 3px;
+}
+
+.small-video video {
+  width: 100% !important;
+  height: 100%;
+  border-bottom: none !important;
+  border-radius: 3px;
+}
+
+.slick-prev:before, .slick-next:before{
+    color: black !important;
+    font-size: 14px !important;
+}
+
+#main-video-container {
+    background: #eee;
+    border-radius: 9px;
+    position: relative;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    width : 276px;
+    height: 210px;
+}
+
+.controls-container {
+  width: fit-content;
+  margin: 5px auto 5px auto;
+}
+
+.controls-container button{
+    background: #eee;
+    color: #424242;
+    margin: 0px 5px 0px 0px;
+    padding: 7px 11px;
+    text-decoration: none;
+    float: left;
+    border: 1px solid #D6D6D6;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    -moz-border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+}
+
+.controls-container .material-icons {
+  font-size: 10px !important; 
+  transform: scale(1.6);
+}
+
+.controls-container .fa {
+  font-size: 10px; transform: scale(1.4);
+}
+
+.clearfix::after { 
+   content: " ";
+   display: block; 
+   height: 0; 
+   clear: both;
+}
