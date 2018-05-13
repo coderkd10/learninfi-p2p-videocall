@@ -1,0 +1,9 @@
+.fakeButton {
+    background-color: rgba(27,31,35,0.07);
+    font-family: monospace;
+    padding: 0.1em 0.4em;
+    font-size: 92%;
+    border: 1px solid rgba(27,31,35,0.1);
+    border-radius: 3px;
+    color: rgb(0, 0, 0, 0.72);
+}
