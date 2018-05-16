@@ -30,7 +30,7 @@ const PermissionErrorDialog = ({
             onClick={onClose}
         />,
     ];
-    if (unsurePermError.isUnsure) {
+    if (unsurePermError) {
         actions = [
             <FlatButton 
                 label="Report"
@@ -58,7 +58,7 @@ const PermissionErrorDialog = ({
 
             <p>(If you tried to, but are still unable / unsure how to grant the permission required to enable video call, please contact our customer support or write to us at <a href={permissionMailtoLink}>contact@learninfi.com</a>)</p>
 
-            { unsurePermError.isUnsure ? <Fragment>
+            { unsurePermError? <Fragment>
                 <hr />
                 <p>If you have already granted permission, or your browser insists that Learninfi does not ask for any, some unexpected error may have occured which is stoping us from getting access to your camera / microhone.
                 If this is the case, please click on the <span className={styles.fakeButton}>Report</span> button to report this issue to our development team, so that they can investigate and fix this issue.
@@ -76,17 +76,15 @@ PermissionErrorDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onRetry: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
+    // set null if you're sure this is a permission error
     unsurePermError: PropTypes.shape({ // To show the report / details section
-        isUnsure: PropTypes.bool.isRequired,
-        errDetails: PropTypes.string,
-        handler: PropTypes.func
+        errDetails: PropTypes.string.isRequired,
+        handler: PropTypes.func.isRequired
     }),
 };
 
 PermissionErrorDialog.defaultProps = {
-    unsurePermError: {
-        isUnsure: false,
-    },
+    unsurePermError: null
 };
 
 export default PermissionErrorDialog;
