@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "classnames": "^2.2.5",
     "mailto-link": "^1.0.0",
     "material-ui": "^0.20.0",
     "prop-types": "^15.6.1",
@@ -10,6 +11,7 @@
     "react-dom": "^16.3.2",
     "react-icons": "^2.2.7",
     "react-scripts-cssmodules": "1.1.10",
+    "react-spinners": "^0.3.2",
     "webrtc-adapter": "^6.1.5"
   },
   "scripts": {
