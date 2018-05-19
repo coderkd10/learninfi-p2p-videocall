@@ -67,7 +67,7 @@ const VideoPlayer = ({
         }
         {/* we show loading if loading state is set externally
         or we don't have a stream prop yet */}
-        {showLoading || !stream ?
+        {showLoading || (!showError && !stream) ?
             (<div className={center}>
                 <ScaleLoader 
                     height={25}
@@ -79,7 +79,10 @@ const VideoPlayer = ({
         }
         {stream ?
             (<div style={{
-                visibility: showLoading ? 'hidden': 'visible',
+                // not using visibility since visibility has a edge case
+                // even if this is hidden but child's visibility is
+                // explicitly set the it (child) will still be visible
+                display: (showLoading || showError) ? 'none': 'block',
             }}>
                 <div className={styles.overlay} 
                     style={{
