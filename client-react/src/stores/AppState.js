@@ -1,7 +1,13 @@
 import { observable } from 'mobx';
+import { create, persist } from 'mobx-persist';
 
 class AppState {
-    @observable showAutoplayErrorDialog = true;
+    @persist @observable showAutoplayErrorDialog = true;
 };
 
-export default new AppState();
+const appState = new AppState();
+const hydrate = create();
+
+hydrate('vcapp_1', appState).then(() => console.log('hydrated app state'));
+
+export default appState;
