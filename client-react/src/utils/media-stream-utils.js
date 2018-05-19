@@ -28,3 +28,9 @@ export const removeAndStopVideoTrack = stream => {
     const videoTrack = getVideoTrack(stream);
     videoTrack && removeAndStopTrack(stream, videoTrack);
 }
+
+export const createEmptyStream = () => {
+    if (window.MediaStream)
+        return new window.MediaStream()
+    return {};
+}

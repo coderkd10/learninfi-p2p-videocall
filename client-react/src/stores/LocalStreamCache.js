@@ -3,12 +3,16 @@ import {
     hasVideo,
     removeAndStopAudioTrack,
     removeAndStopVideoTrack,
+    createEmptyStream,
 } from '../utils/media-stream-utils';
 
 export default class LocalStreamCache {
     _currentStreamPromise = null; // stream cache
 
     _init(audio, video) {
+        if (!audio && !video) {
+            return Promise.resolve(createEmptyStream());
+        }
         this._currentStreamPromise = navigator.mediaDevices.getUserMedia({ audio, video });
         return this._currentStreamPromise;
     }

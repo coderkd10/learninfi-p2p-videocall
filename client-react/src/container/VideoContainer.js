@@ -5,6 +5,16 @@ import AutoplayErrorContainer from './error/AutoplayErrorContainer';
 
 const DEFAULT_ASPECT_RATIO = 4/3; //some random default value initially
 
+const playVideo = (videoElement, stream) => {
+    // videoElement is a html5 video element
+    // this function tries to play given stream in that element
+    if (!stream.hasAudio && !stream.hasVideo) {
+        return Promise.resolve();
+    }
+    videoElement.srcObject = stream.streamObj;
+    return videoElement.play();
+}
+
 class VideoContainer extends Component {
     state = {
         videoLoading: true,
@@ -34,8 +44,7 @@ class VideoContainer extends Component {
                 autoplayError: false,
                 requestAutoplayErrorDialog: false,
             });
-            this.video.srcObject = stream.streamObj;
-            this.video.play()
+            playVideo(this.video, stream)
                 .then(() => {
                     this.setState({
                         videoLoading: false,
