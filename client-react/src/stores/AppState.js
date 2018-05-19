@@ -1,7 +1,7 @@
 import { observable } from 'mobx';
 
 class AppState {
-    @observable n = 0;
+    @observable showAutoplayErrorDialog = true;
 };
 
 export default new AppState();

@@ -1,7 +1,7 @@
 // Inspired from https://github.com/mozmorris/react-webcam/blob/master/src/react-webcam.js
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import LocalStreamCache from '../data-structures/LocalStreamCache';
+import LocalStreamCache from '../stores/LocalStreamCache';
 import ErrorContainer from './error';
 
 export default class Webcam extends Component {
