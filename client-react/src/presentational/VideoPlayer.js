@@ -5,12 +5,14 @@ import ScaleLoader from 'react-spinners/dist/spinners/ScaleLoader';
 import ErrorIcon from 'react-icons/lib/md/error';
 import PlayIcon from 'react-icons/lib/fa/play';
 import UserIcon from 'react-icons/lib/fa/user';
-import OrigVolumeOffIcon from 'react-icons/lib/md/volume-off';
+import VolumeOffIcon from 'react-icons/lib/md/volume-off';
+import VolumeUpIcon from 'react-icons/lib/md/volume-up';
 import computeDimensions from '../utils/size-utils';
 import { center } from '../utils/style-utils.module.css';
 import styles from './VideoPlayer.module.css';
 
-const VolumeOffIcon = ({
+const VolumeIconContainer = ({
+    isVolumeOn,
     containerWidth,
     containerHeight,
     style
@@ -20,8 +22,9 @@ const VolumeOffIcon = ({
         maxWidth: 0.1*containerWidth,
         maxHeight: 0.35*containerHeight,
     });
+    const Icon = isVolumeOn ? VolumeUpIcon: VolumeOffIcon;
     return (
-        <OrigVolumeOffIcon
+        <Icon
             className={styles.volumeOffIcon}
             style={{
                 width,
@@ -123,11 +126,12 @@ const VideoPlayer = ({
                         })
                     }
                 />
-                <VolumeOffIcon
+                <VolumeIconContainer
+                    isVolumeOn={stream.hasAudio}
                     containerWidth={width}
                     containerHeight={height}
                     style={{
-                        visibility: stream.hasAudio ? 'hidden': 'visible'
+                        visibility: stream.hasVideo && stream.hasAudio ? 'hidden': 'visible'
                     }}
                 />
             </div>): null
