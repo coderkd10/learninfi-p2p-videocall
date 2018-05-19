@@ -7,13 +7,13 @@ const computeDimensions = ({
 }) => {
     // either we'll occupy full width or full height
     // W, H, r
-    // ans -> parameterized by w :  w, rw
-    // w <= W
-    // rw <= H => w <= H/r
-    // find larget w that satisfies these conditions
-    // w_ans = min (W, H/r)
-    const width = Math.min(maxWidth, maxHeight / aspectRatio);
-    const height = aspectRatio * width;
+    // ans -> parameterized by h :  w = rh, h
+    // h <= H
+    // rh <= H => h <= W/r
+    // find larget h that satisfies these conditions
+    // h_ans = min (H, W/r)
+    const height = Math.min(maxHeight, maxWidth / aspectRatio);
+    const width = aspectRatio * height;
     return {
         width, height
     };
