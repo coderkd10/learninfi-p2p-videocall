@@ -63,7 +63,7 @@ class VideoContainer extends Component {
                     showError={showError}
                     videoRef={ref => {this.video = ref;}}
                     videoAspectRatio={this.state.videoAspectRatio}
-                    showOverlay={this.state.showAutoplayError}
+                    showOverlay={this.state.autoplayError}
                     onOverlayClick={this.tryPlayingVideo}
                 />
                 <AutoplayErrorContainer

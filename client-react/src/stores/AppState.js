@@ -8,6 +8,6 @@ class AppState {
 const appState = new AppState();
 const hydrate = create();
 
-hydrate('vcapp_1', appState).then(() => console.log('hydrated app state'));
+hydrate('vcapp_2', appState).then(() => console.log('hydrated app state'));
 
 export default appState;
