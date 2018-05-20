@@ -1,0 +1,12 @@
+.container {
+    position: relative;
+    padding: 3px;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+}
+
+.waitingText {
+    font-family: sans-serif;
+    color: #aaa;
+    font-weight: 300;
+}
