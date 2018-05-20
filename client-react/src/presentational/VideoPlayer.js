@@ -118,13 +118,14 @@ const VideoPlayer = ({
                 <video
                     ref={videoRef}
                     className={center}
-                    style={
-                        computeDimensions({
+                    style={{
+                        ...computeDimensions({
                             aspectRatio: videoAspectRatio,
                             maxWidth: width,
                             maxHeight: height
-                        })
-                    }
+                        }),
+                        visibility: stream.hasVideo ? 'visible': 'hidden'
+                    }}
                 />
                 <VolumeIconContainer
                     isVolumeOn={stream.hasAudio}
