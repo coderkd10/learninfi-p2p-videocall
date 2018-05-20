@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import VideoPlayer from '../presentational/VideoPlayer';
 import AutoplayErrorContainer from './error/AutoplayErrorContainer';
+import cancelifyPromise, { CANCELED_PROMISE_EXCEPTION_NAME } from '../shared/cancelifyPromise';
 
 const DEFAULT_ASPECT_RATIO = 4/3; //some random default value initially
 
@@ -44,14 +45,24 @@ class VideoContainer extends Component {
                 autoplayError: false,
                 requestAutoplayErrorDialog: false,
             });
-            playVideo(this.video, stream)
+
+            if (this.playPromise) {
+                this.playPromise.cancel();
+            }
+            this.playPromise = cancelifyPromise(playVideo(this.video, stream));
+            this.playPromise
                 .then(() => {
                     this.setState({
                         videoLoading: false,
                         videoAspectRatio: this.getVideoAspectRatio(),
                     });
                 })
-                .catch(() => {
+                .catch(err => {
+                    if (err.name === CANCELED_PROMISE_EXCEPTION_NAME) {
+                        // this was a previously canceled promise
+                        return;
+                    }
+                    // todo: log this to the backend
                     this.setState({
                         videoLoading: false,
                         videoAspectRatio: this.getVideoAspectRatio(),

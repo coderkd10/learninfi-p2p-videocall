@@ -16,6 +16,8 @@ const App = ({
     style,
     captureAudio,
     captureVideo,
+    onWebcamButtonClick,
+    onMicButtonClick,
 }) => {
     const innerWidth = width - 2*BORDER_SIZE;
     const innerHeight = height - 2*BORDER_SIZE;
@@ -65,6 +67,10 @@ const App = ({
                 height={toolsContainerHeight}
                 minHorizontalPadding={0.2*innerWidth}
                 minVerticalPadding={0.125*toolsContainerHeight}
+                isWebcamOn={captureVideo}
+                onWebcamButtonClick={onWebcamButtonClick}
+                isMicOn={captureAudio}
+                onMicButtonClick={onMicButtonClick}
             />
         </div>);
 };
@@ -75,6 +81,8 @@ App.propTypes = {
     style: PropTypes.object,
     captureAudio: PropTypes.bool.isRequired,
     captureVideo: PropTypes.bool.isRequired,
+    onWebcamButtonClick: PropTypes.func.isRequired,
+    onMicButtonClick: PropTypes.func.isRequired,
 };
 
 App.defaultProps = {

@@ -11,6 +11,12 @@ class AppContainer extends Component {
                 {...this.props}
                 captureAudio={appState.captureAudio}
                 captureVideo={appState.captureVideo}
+                onWebcamButtonClick={() => {
+                    appState.captureVideo = !appState.captureVideo;
+                }}
+                onMicButtonClick={() => {
+                    appState.captureAudio = !appState.captureAudio;
+                }}
             />);
     }
 }
