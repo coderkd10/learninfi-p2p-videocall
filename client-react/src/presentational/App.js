@@ -5,6 +5,7 @@ import ToolsContainer from './ToolsContainer';
 import styles from './App.module.css';
 
 const BORDER_SIZE = 1;
+const TOOLS_CONTAINER_MAX_HEIGHT = 39;
 
 const App = ({
     width,
@@ -13,7 +14,9 @@ const App = ({
 }) => {
     const innerWidth = width - 2*BORDER_SIZE;
     const innerHeight = height - 2*BORDER_SIZE;
-  
+    const peersAreaHeight = 0.3*innerHeight;
+    const toolsContainerHeight = Math.min(TOOLS_CONTAINER_MAX_HEIGHT, 0.15*innerHeight);
+    
     return (
         <div className={styles.container} style={{
             width,
@@ -23,13 +26,13 @@ const App = ({
         }}>
             <PeersArea 
                 width={innerWidth}
-                height={0.3*innerHeight}
+                height={peersAreaHeight}
             />
             <ToolsContainer
                 width={innerWidth}
-                height={39}
+                height={toolsContainerHeight}
                 minHorizontalPadding={0.2*innerWidth}
-                minVerticalPadding={5}
+                minVerticalPadding={0.125*toolsContainerHeight}
             />
         </div>);
 };
@@ -41,6 +44,8 @@ App.propTypes = {
 };
 
 App.defaultProps = {
+    width: 300,
+    height: 364,
     style: {},
 };
 
