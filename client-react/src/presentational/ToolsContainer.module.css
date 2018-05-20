@@ -1,0 +1,25 @@
+.container {
+    position: relative;
+}
+
+.button {
+    background-color: #eee;
+    color: #424242;
+    border: 1px solid #d6d6d6;
+    box-sizing: border-box;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+}
+
+.button:hover {
+    background-color: #dadada;
+}
+
+.button:disabled {
+    color: #a3a3a3;
+    background-color: #f8f8f8;
+    border: 1px solid #ededed;
+    cursor: not-allowed;
+}
