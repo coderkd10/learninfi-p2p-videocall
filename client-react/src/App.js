@@ -1,33 +1,22 @@
 import 'webrtc-adapter';
 import React from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import Webcam from './container/Webcam';
-import VideoContainer from './container/VideoContainer';
+import AppContainer from './container/AppContainer';
 import { center } from './utils/style-utils.module.css';
 
-const App = () =>
-  <Webcam 
-    audio={true}
-    video={true}
-  >
-  {
-    ({
-      err,
-      showLoading,
-      stream
-    }) => (
-      <div className={center}>
-        <VideoContainer
-          height={200}
-          width={275}
-          showLoading={showLoading}
-          showError={Boolean(err)}
-          stream={stream}
-        />
-      </div>
-    )
-  }
-  </Webcam>
+// todo: replace this with only themed app container
+// when exporting this as a library and move the container
+// with 100vw, 100vw to index.js
+const App = () => 
+  <div style={{
+    width: '100vw',
+    height: '100vh',
+    background: '#dbdbdb'
+  }}>
+    <div className={center}>
+      <AppContainer />
+    </div>
+  </div>
 
 const ThemedApp = () =>
   <MuiThemeProvider>
