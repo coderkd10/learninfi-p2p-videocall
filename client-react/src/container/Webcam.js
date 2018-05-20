@@ -3,6 +3,8 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import LocalStreamCache from '../stores/LocalStreamCache';
 import ErrorContainer from './error';
+import { appReady } from '../stores/AppState';
+import cancelifyPromise, { CANCELED_PROMISE_EXCEPTION_NAME } from '../shared/cancelifyPromise';
 
 export default class Webcam extends Component {
     state = {
@@ -13,11 +15,18 @@ export default class Webcam extends Component {
     };
     streamCache = new LocalStreamCache();
     
-    updateStream(audio, video) {
+    updateStream = async () => {
         if (!this.state.stream) {
             this.setState({ showLoading: true });
         }
-        this.streamCache.getStream(audio, video)
+        // wait for audio and video props to be hydrated
+        await appReady;
+        const { audio, video } = this.props;
+        if (this.streamPromise) {
+            this.streamPromise.cancel();
+        }
+        this.streamPromise = cancelifyPromise(this.streamCache.getStream(audio, video));
+        this.streamPromise
         .then(stream => {
             this.setState({
                 showErrorDialog: false,
@@ -31,6 +40,10 @@ export default class Webcam extends Component {
             });
         })
         .catch(err => {
+            if (err.name === CANCELED_PROMISE_EXCEPTION_NAME) {
+                // this promise was canceled
+                return;
+            }  
             this.setState({
                 showErrorDialog: true,
                 err,
@@ -43,13 +56,13 @@ export default class Webcam extends Component {
     }
 
     componentDidMount() {
-        this.updateStream(this.props.audio, this.props.video);
+        this.updateStream();
     }
 
     componentDidUpdate(prevProps) {
         if (this.props.audio !== prevProps.audio || this.props.video !== prevProps.video) {
-            this.updateStream(this.props.audio, this.props.video);
-        }
+            this.updateStream();
+        }   
     }
 
     componentWillUnmount() {
@@ -67,7 +80,7 @@ export default class Webcam extends Component {
         // if yes show another dialog, informing the user
         // if they have granted permission they may have to
         // reload the page for the permissions to take effect.
-        this.updateStream(this.props.audio, this.props.video);
+        this.updateStream();
     }
 
     render() {
