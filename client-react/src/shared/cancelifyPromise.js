@@ -1,3 +1,4 @@
+// todo: publish this as a standalone npm module
 // my simple implementation of a cacelable promise
 
 export const CANCELED_PROMISE_EXCEPTION_NAME = "CanceledPromiseException";
@@ -14,22 +15,27 @@ const generateCanceledPromiseException = () => {
 // behaves like the original promise
 // but after the cancel 
 const cancelifyPromise = origPromise => {
-    let resolveFn;
-    let rejectFn;
+    let cbs = null; // reference to new promise's callbacks
     const newPromise = new Promise((resolve, reject) => {
-        resolveFn = resolve;
-        rejectFn = reject;
+        cbs = {
+            resolve,
+            reject
+        };
     });
     newPromise.cancel = () => {
-        // somehow cancel the promise
-        rejectFn(generateCanceledPromiseException());
+        // ensure that the new promise is rejected
+        // with the correct name set
+        cbs && cbs.reject(generateCanceledPromiseException());
+        cbs = null;
     }
     origPromise
         .then(v => {
-            resolveFn(v);
+            cbs && cbs.resolve(v);
+            cbs = null;
         })
         .catch(e => {
-            rejectFn(e);
+            cbs && cbs.reject(e);
+            cbs = null;
         })
     return newPromise;
 }
