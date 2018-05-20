@@ -3,6 +3,9 @@ import { create, persist } from 'mobx-persist';
 
 class AppState {
     @persist @observable showAutoplayErrorDialog = true;
+    
+    @persist @observable captureAudio = true;
+    @persist @observable captureVideo = true;
 };
 
 const appState = new AppState();
