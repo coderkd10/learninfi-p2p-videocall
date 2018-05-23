@@ -43,7 +43,7 @@ export default class Webcam extends Component {
             if (err.name === CANCELED_PROMISE_EXCEPTION_NAME) {
                 // this promise was canceled
                 return;
-            }  
+            }
             this.setState({
                 showErrorDialog: true,
                 err,
@@ -59,10 +59,21 @@ export default class Webcam extends Component {
         this.updateStream();
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         if (this.props.audio !== prevProps.audio || this.props.video !== prevProps.video) {
             this.updateStream();
-        }   
+        }
+        if (
+            this.state.showLoading !== prevState.showLoading ||
+            this.state.err !== prevState.err ||
+            this.state.stream !== prevState.stream
+        ) {
+            this.props.onVideoUpdate({
+                showLoading: this.state.showLoading,
+                showError: Boolean(this.state.err),
+                stream: this.state.stream,
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -107,5 +118,11 @@ export default class Webcam extends Component {
 Webcam.propTypes = {
     audio: PropTypes.bool.isRequired,
     video: PropTypes.bool.isRequired,
-    children: PropTypes.func.isRequired,
+    children: PropTypes.func,
+    onVideoUpdate: PropTypes.func
+};
+
+Webcam.defaultProps = {
+    children: () => {},
+    onVideoUpdate: () => {}
 };
