@@ -19,7 +19,7 @@ import { removeInArray } from '../common/utils';
 // Notes:
 // 1. Two reconnection attempts take around 5 secs. If reconnection fails after 2 attempts show error to the user. 
 
-const SOCKET_IO_SERVER_URL = '2635d75c.ngrok.io';
+const SOCKET_IO_SERVER_URL = 'f5629720.ngrok.io';
 
 class PeersProvider extends Component {
     state = {
@@ -36,7 +36,7 @@ class PeersProvider extends Component {
 
         this.socket.on('connect', () => {
             this.joinRoom();
-        })
+        });
 
         this.socket.on('disconnect', (reason) => {
             // todo: clean any state / variables connected with individual peers
@@ -65,6 +65,7 @@ class PeersProvider extends Component {
             this.setState(prevState => ({
                 peers: removeInArray(prevState.peers, peerId)
             }));
+            this.removePeer(peerId);
         });
 
         this.socket.on(PEER_JOINED_ROOM, peerId => {
@@ -102,7 +103,9 @@ class PeersProvider extends Component {
     }
 
     joinRoom() {
-        // todo: clean any state / variables connected with individual peers
+        Object.keys(this.peerConnections).forEach(peerId => {
+            this.removePeer(peerId);
+        });
         this.setState({
             isConnected: false,
             numConnectionAttempts: 0,
@@ -110,11 +113,19 @@ class PeersProvider extends Component {
         });
         this.socket.emit(ROOM_JOIN_REQUEST, this.props.roomName, (err, peers) => {
             // todo: handle/ log err
-            // got list of connected peers here
-            // do stuff with it
+            if (!peers) {
+                console.log("got no peers back");
+                // todo: handle this case appropriately later
+                return;
+            }
             this.setState({
                 isConnected: true,
                 peers,
+            });
+            peers.forEach(peerId => {
+                if (peerId !== this.socket.id) {
+                    this.addPeer(peerId);
+                }
             });
         });
     }
@@ -125,6 +136,7 @@ class PeersProvider extends Component {
             return;
         }
         console.log(`adding a new peer ${peerId}`);
+        // todo: add turn server config
         // for sending video streams
         const sender = new Peer({ initiator: true });
         sender.on('signal', data => {
@@ -137,7 +149,18 @@ class PeersProvider extends Component {
         });
         sender.on('connect', () => {
             console.log(`sender connection with ${peerId} established`);
-        })
+        });
+        sender.on('close', () => {
+            // todo: should we do something here?
+            // todo: can this happen that we get a close here (i.e p2p connection)
+            // has closed, but we don't get PEER_LEFT_ROOM / disconnect / reconnecting
+            // events even after significant time.
+            // this would mean that this peer thinks the other peer is available
+            // and connected via socket.io but not via a peer connection
+            // should log the close and other events and figure out if this scenario
+            // occurs in the wild.
+            console.log(`sender peer connection with ${peerId} closed`);
+        });
         // for receiving video streams
         const receiver = new Peer();
         receiver.on('signal', data => {
@@ -146,15 +169,27 @@ class PeersProvider extends Component {
                 data,
                 emittedFromSender: false,
             });
-        })
+        });
         receiver.on('connect', () => {
             console.log(`receiver connection with ${peerId} established`);
-        })
+        });
+        receiver.on('close', () => {
+            // todo: should we do something here?
+            console.log(`receiver peer connection with ${peerId} closed`);
+        });
+        // todo: handle/ log the "error" events
         this.peerConnections[peerId] = { sender, receiver };
     }
 
-    // todo: add method to remove peer
-    // todo: start adding peers when we first get the response from server
+    removePeer(peerId) {
+        if (!this.peerConnections[peerId]) {
+            return;
+        }
+        console.log(`closing peer connection with peer ${peerId}`);
+        this.peerConnections[peerId].sender.destroy();
+        this.peerConnections[peerId].receiver.destroy();
+        this.peerConnections[peerId] = null;
+    }
 
     componentDidUpdate(prevProps) {
         if (this.props.roomName !== prevProps.roomName) {
