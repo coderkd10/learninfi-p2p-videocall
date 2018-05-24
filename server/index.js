@@ -5,6 +5,7 @@ const {
     ROOM_JOIN_REQUEST,
     PEER_LEFT_ROOM,
     PEER_JOINED_ROOM,
+    SIGNAL_DATA,
 } = require('../common/socket-io-events');
 const utils = require('../common/utils');
 const io = require('socket.io')();
@@ -54,6 +55,14 @@ io.on('connection', socket => {
                 return cb(err);
             }
             cb(null, joinRoom(socket, roomName));
+        });
+    });
+
+    socket.on(SIGNAL_DATA, ({ peerId, ...other }) => {
+        // send this message to the destined peer
+        socket.broadcast.to(peerId).emit(SIGNAL_DATA, {
+            peerId: socket.id,
+            ...other,
         });
     });
 

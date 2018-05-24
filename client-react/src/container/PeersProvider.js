@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import io from 'socket.io-client';
+import Peer from 'simple-peer';
 import { videoData } from '../utils/types';
 import {
     ROOM_JOIN_REQUEST,
     PEER_LEFT_ROOM,
     PEER_JOINED_ROOM,
+    SIGNAL_DATA,
 } from '../common/socket-io-events';
 import { removeInArray } from '../common/utils';
 
 // socket.io client events are documented - https://github.com/socketio/socket.io-client/blob/master/docs/API.md
 // todo:
-// 1. handle (or atleast log) the disconnect event as described in https://github.com/socketio/socket.io-client/blob/master/docs/API.md#event-disconnect
+// 1. Test for WEBRTC_SUPPORT support in the client and if not show appropriate error message to the user.
+// 2. handle (or atleast log) the disconnect event as described in https://github.com/socketio/socket.io-client/blob/master/docs/API.md#event-disconnect
 
 // Notes:
 // 1. Two reconnection attempts take around 5 secs. If reconnection fails after 2 attempts show error to the user. 
@@ -26,7 +29,9 @@ class PeersProvider extends Component {
     };
 
     constructor(props) {
-        super(props);      
+        super(props);
+        // keeps actual simpler peer connnection objects
+        this.peerConnections = {};     
         this.socket = io(SOCKET_IO_SERVER_URL);
 
         this.socket.on('connect', () => {
@@ -78,10 +83,21 @@ class PeersProvider extends Component {
                 return;
             }
             peers = [...peers, peerId];
-            // todo: setup a simple peer connection with this peer
+            this.addPeer(peerId);            
             this.setState({
                 peers
             });
+        });
+
+        this.socket.on(SIGNAL_DATA, ({ peerId, data, emittedFromSender }) => {
+            if (!this.peerConnections[peerId]) {
+                this.addPeer(peerId);
+            }
+            if (emittedFromSender) {
+                this.peerConnections[peerId].receiver.signal(data);
+            } else {
+                this.peerConnections[peerId].sender.signal(data);
+            }
         });
     }
 
@@ -102,6 +118,43 @@ class PeersProvider extends Component {
             });
         });
     }
+
+    addPeer(peerId) {
+        if (this.peerConnections[peerId]) {
+            // already have and active connection with the peer
+            return;
+        }
+        console.log(`adding a new peer ${peerId}`);
+        // for sending video streams
+        const sender = new Peer({ initiator: true });
+        sender.on('signal', data => {
+            // send this signal to the other peer via socket.io
+            this.socket.emit(SIGNAL_DATA, {
+                peerId,
+                data,
+                emittedFromSender: true,
+            });
+        });
+        sender.on('connect', () => {
+            console.log(`sender connection with ${peerId} established`);
+        })
+        // for receiving video streams
+        const receiver = new Peer();
+        receiver.on('signal', data => {
+            this.socket.emit(SIGNAL_DATA, {
+                peerId,
+                data,
+                emittedFromSender: false,
+            });
+        })
+        receiver.on('connect', () => {
+            console.log(`receiver connection with ${peerId} established`);
+        })
+        this.peerConnections[peerId] = { sender, receiver };
+    }
+
+    // todo: add method to remove peer
+    // todo: start adding peers when we first get the response from server
 
     componentDidUpdate(prevProps) {
         if (this.props.roomName !== prevProps.roomName) {
