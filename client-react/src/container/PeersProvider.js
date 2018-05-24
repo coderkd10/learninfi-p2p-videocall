@@ -5,6 +5,7 @@ import { videoData } from '../utils/types';
 import {
     ROOM_JOIN_REQUEST,
     PEER_LEFT_ROOM,
+    PEER_JOINED_ROOM,
 } from '../common/socket-io-events';
 import { removeInArray } from '../common/utils';
 
@@ -50,12 +51,38 @@ class PeersProvider extends Component {
         });
 
         this.socket.on(PEER_LEFT_ROOM, peerId => {
-            console.log("--> peer left room : ", peerId);
+            if (peerId === this.socket.id) {
+                // can this actually happen? - not likely
+                // todo: log this to the server to check if this occurs in the wild
+                return;
+            }
             // todo: clean any state / variables associated with this peer
             this.setState(prevState => ({
                 peers: removeInArray(prevState.peers, peerId)
             }));
-        })
+        });
+
+        this.socket.on(PEER_JOINED_ROOM, peerId => {
+            if (peerId === this.socket.id)
+                return;
+            let peers = this.state.peers;
+            if (!peers) {
+                // can this actually happen? - doesn't seem likely
+                // todo: log this to the server
+                peers = [];
+            }
+            const prevIndex = peers.indexOf(peerId);
+            if (prevIndex !== -1) {
+                // we already knew about this peer
+                // so nothing to do here
+                return;
+            }
+            peers = [...peers, peerId];
+            // todo: setup a simple peer connection with this peer
+            this.setState({
+                peers
+            });
+        });
     }
 
     joinRoom() {

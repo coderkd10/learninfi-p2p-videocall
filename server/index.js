@@ -4,6 +4,7 @@
 const {
     ROOM_JOIN_REQUEST,
     PEER_LEFT_ROOM,
+    PEER_JOINED_ROOM,
 } = require('../common/socket-io-events');
 const utils = require('../common/utils');
 const io = require('socket.io')();
@@ -12,6 +13,9 @@ const rooms = {};
 const joinRoom = (socket, roomName) => {
     if (!rooms[roomName]) {
         rooms[roomName] = [];
+    } else {
+        // notify other peers that this guy joined
+        io.to(roomName).emit(PEER_JOINED_ROOM, socket.id);
     }
     rooms[roomName].push(socket.id);
     return rooms[roomName];

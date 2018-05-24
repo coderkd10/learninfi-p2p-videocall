@@ -1,4 +1,5 @@
 module.exports = {
     ROOM_JOIN_REQUEST: 'roomJoinRequest',
-    PEER_LEFT_ROOM: 'clientLeftRoom', 
+    PEER_LEFT_ROOM: 'peerLeftRoom',
+    PEER_JOINED_ROOM: 'peerJoinedRoom', 
 };
