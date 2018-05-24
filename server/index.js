@@ -60,10 +60,6 @@ io.on('connection', socket => {
             leaveRoom(socket, socket.roomName);
         }
     });
-
-    socket.on('disconnecting', (reason) => {
-        console.log(`client ${socket.id} disconnecting - `, reason);
-    })
 });
 
 
