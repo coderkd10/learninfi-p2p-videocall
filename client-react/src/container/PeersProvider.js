@@ -44,6 +44,7 @@ class PeersProvider extends Component {
                 isConnected: false,
                 peers: null
             });
+            this.removeAllPeers();
         });
         
         this.socket.on('reconnecting', (attemptNumber) => {
@@ -53,6 +54,7 @@ class PeersProvider extends Component {
                 numConnectionAttempts: attemptNumber,
                 peers: null
             });
+            this.removeAllPeers();
         });
 
         this.socket.on(PEER_LEFT_ROOM, peerId => {
@@ -103,9 +105,7 @@ class PeersProvider extends Component {
     }
 
     joinRoom() {
-        Object.keys(this.peerConnections).forEach(peerId => {
-            this.removePeer(peerId);
-        });
+        this.removeAllPeers();
         this.setState({
             isConnected: false,
             numConnectionAttempts: 0,
@@ -159,6 +159,9 @@ class PeersProvider extends Component {
             // and connected via socket.io but not via a peer connection
             // should log the close and other events and figure out if this scenario
             // occurs in the wild.
+
+            // note - ^ occurs when one peer closes the lid of the laptop
+            // peer connection is closed but socket.io remains active
             console.log(`sender peer connection with ${peerId} closed`);
         });
         // for receiving video streams
@@ -189,6 +192,13 @@ class PeersProvider extends Component {
         this.peerConnections[peerId].sender.destroy();
         this.peerConnections[peerId].receiver.destroy();
         this.peerConnections[peerId] = null;
+        delete this.peerConnections[peerId];
+    }
+
+    removeAllPeers() {
+        Object.keys(this.peerConnections).forEach(peerId => {
+            this.removePeer(peerId);
+        });
     }
 
     componentDidUpdate(prevProps) {
