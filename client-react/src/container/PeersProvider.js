@@ -4,7 +4,9 @@ import io from 'socket.io-client';
 import { videoData } from '../utils/types';
 import {
     ROOM_JOIN_REQUEST,
+    PEER_LEFT_ROOM,
 } from '../common/socket-io-events';
+import { removeInArray } from '../common/utils';
 
 // socket.io client events are documented - https://github.com/socketio/socket.io-client/blob/master/docs/API.md
 // todo:
@@ -13,61 +15,62 @@ import {
 // Notes:
 // 1. Two reconnection attempts take around 5 secs. If reconnection fails after 2 attempts show error to the user. 
 
-const SOCKET_IO_SERVER_URL = '1b859762.ngrok.io';
+const SOCKET_IO_SERVER_URL = '2635d75c.ngrok.io';
 
 class PeersProvider extends Component {
     state = {
+        isConnected: false,
+        numConnectionAttempts: 0,
         peers: null,
     };
 
     constructor(props) {
-        super(props);
+        super(props);      
         this.socket = io(SOCKET_IO_SERVER_URL);
-        // todo: setup connect, disconnect listener here if required
-        this.socket.on('connect', () => {
-            console.log("--> connected : ", this.socket.id);
-        })
-        this.socket.on('connect_error', err => {
-            console.log("--> connect_error occured - ", err);
-        });
-        this.socket.on('connect_timeout', (timeout) => {
-            // when does this occur?
-            console.log("--> connect timeout occured - ", timeout);
-        });
-        this.socket.on('error', (error) => {
-            // todp: log this to the server
-            console.log("--> some error occured - ", error);
-        });
-        this.socket.on('disconnect', (reason) => {
-            console.log("--> disconnected - ", reason);
-        });
-        this.socket.on('reconnect', (attemptNumber) => {
-            console.log("--> reconnected after attempt - ", attemptNumber);
-        });
-        this.socket.on('reconnect_attempt', (attemptNumber) => {
-            console.log('--> reconnect_attempt - ', attemptNumber);
-        });
-        this.socket.on('reconnecting', (attemptNumber) => {
-            console.log('--> reconnecting - ', attemptNumber);
-        });
-        this.socket.on('reconnect_error', (error) => {
-            console.log('--> reconnect_error - ', error);
-        });
-        this.socket.on('reconnect_failed', () => {
-            // this will never occur since we haven't set a reconnectionAttempts
-            // and its default value is infinity
-            console.log('--> reconnect failed')
-          });
 
-        this.joinRoom();
+        this.socket.on('connect', () => {
+            this.joinRoom();
+        })
+
+        this.socket.on('disconnect', (reason) => {
+            // todo: clean any state / variables connected with individual peers
+            this.setState({
+                isConnected: false,
+                peers: null
+            });
+        });
+        
+        this.socket.on('reconnecting', (attemptNumber) => {
+            // todo: clean any state / variables connected with individual peers
+            this.setState({
+                isConnected: false,
+                numConnectionAttempts: attemptNumber,
+                peers: null
+            });
+        });
+
+        this.socket.on(PEER_LEFT_ROOM, peerId => {
+            console.log("--> peer left room : ", peerId);
+            // todo: clean any state / variables associated with this peer
+            this.setState(prevState => ({
+                peers: removeInArray(prevState.peers, peerId)
+            }));
+        })
     }
 
     joinRoom() {
+        // todo: clean any state / variables connected with individual peers
+        this.setState({
+            isConnected: false,
+            numConnectionAttempts: 0,
+            peers: null,
+        });
         this.socket.emit(ROOM_JOIN_REQUEST, this.props.roomName, (err, peers) => {
+            // todo: handle/ log err
             // got list of connected peers here
             // do stuff with it
-            console.log("connected peers ->", peers);
             this.setState({
+                isConnected: true,
                 peers,
             });
         });
@@ -75,12 +78,13 @@ class PeersProvider extends Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.roomName !== prevProps.roomName) {
+            // room changed. join the new room
             this.joinRoom();
         }
     }
 
     render() {
-        return <pre>{this.state.peers && this.state.peers.join(',\n')}</pre>
+        return <pre>{JSON.stringify(this.state, null, 2)}</pre>
     }
 }
 

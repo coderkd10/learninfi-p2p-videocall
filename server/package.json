@@ -1,0 +1,12 @@
+{
+  "name": "vcapp-server",
+  "version": "1.0.0",
+  "description": "socket.io server for learninfi's video calling app",
+  "main": "index.js",
+  "author": "Abhishek Kedia <kedia.abhishek10@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "socket.io": "^2.1.1"
+  }
+}
