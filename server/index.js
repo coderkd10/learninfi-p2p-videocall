@@ -6,6 +6,7 @@ const {
     PEER_LEFT_ROOM,
     PEER_JOINED_ROOM,
     SIGNAL_DATA,
+    REQUEST_CLOSE_PEER_CONNECTION,
 } = require('../common/socket-io-events');
 const utils = require('../common/utils');
 const io = require('socket.io')();
@@ -64,6 +65,21 @@ io.on('connection', socket => {
             peerId: socket.id,
             ...other,
         });
+    });
+
+    socket.on(REQUEST_CLOSE_PEER_CONNECTION, (peerId, cb) => {
+        console.log(`${socket.id} wants ${peerId} to close its connection with him`);
+        const peerSocket = io.sockets.connected[peerId];
+        if (!peerSocket) {
+            console.log(`looks like ${peerId} is not even connected at the moment`);
+            console.log(`so we are assuming that it must have closed its peer connections with requesting peer ${socket.id} by now`);
+            cb();
+        } else {
+            peerSocket.emit(REQUEST_CLOSE_PEER_CONNECTION, socket.id, () => {
+                console.log(`${peerId} responded by saying that it has closed its peer connection with ${socket.id}. relaying this information back to peer ${socket.id}.`);
+                cb();
+            });
+        }
     });
 
     socket.on('disconnect', (reason) => {
