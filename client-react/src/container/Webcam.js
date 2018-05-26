@@ -98,7 +98,7 @@ export default class Webcam extends Component {
         const { err, showLoading, stream } = this.state;
         return <Fragment>
             {this.props.children({
-                err,
+                showError: Boolean(err),
                 showLoading,
                 stream,
             })}
