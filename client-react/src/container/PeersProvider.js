@@ -37,7 +37,7 @@ import { connectionStates } from '../constants';
 // Notes:
 // 1. Two reconnection attempts take around 5 secs. If reconnection fails after 2 attempts show error to the user. 
 
-const SOCKET_IO_SERVER_URL = 'bbc8a33c.ngrok.io';
+const SOCKET_IO_SERVER_URL = 'localhost:3500';
 const PEER_RE_MIN_DELAY = 200; // in ms -> minimum delay to reestablish a peer connection
 
 class PeersProvider extends Component {
@@ -457,7 +457,9 @@ class PeersProvider extends Component {
         if (stream) {
             const { hasAudio, hasVideo } = stream;
             streamMetadata = { hasAudio, hasVideo };
-            streamObj = stream.streamObj;
+            if (hasAudio || hasVideo) {
+                streamObj = stream.streamObj;
+            }
         }
         const videoMetadata = {
             showLoading,
