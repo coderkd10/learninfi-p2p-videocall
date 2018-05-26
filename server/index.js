@@ -7,6 +7,7 @@ const {
     PEER_JOINED_ROOM,
     SIGNAL_DATA,
     REQUEST_CLOSE_PEER_CONNECTION,
+    VIDEO_METADATA,
 } = require('../common/socket-io-events');
 const utils = require('../common/utils');
 const io = require('socket.io')();
@@ -82,6 +83,13 @@ io.on('connection', socket => {
         }
     });
 
+    socket.on(VIDEO_METADATA, ({ peerId, videoMetadata }) => {
+        socket.broadcast.to(peerId).emit(VIDEO_METADATA, {
+            peerId: socket.id,
+            videoMetadata,
+        });
+    });
+
     socket.on('disconnect', (reason) => {
         console.log(`client ${socket.id} disconnected`);
 
@@ -90,7 +98,5 @@ io.on('connection', socket => {
         }
     });
 });
-
-
 
 io.listen(3500);

@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 import Peer from 'simple-peer';
-import { videoData } from '../utils/types';
+import { videoData, defaultVideoData } from '../utils/types';
 import {
     ROOM_JOIN_REQUEST,
     PEER_LEFT_ROOM,
     PEER_JOINED_ROOM,
     SIGNAL_DATA,
     REQUEST_CLOSE_PEER_CONNECTION,
+    VIDEO_METADATA,    
 } from '../common/socket-io-events';
 import { removeInArray } from '../common/utils';
 import { delay } from '../utils/promise-utils';
@@ -51,6 +52,8 @@ class PeersProvider extends Component {
         //     receiver: <connection state>
         // }
         peerConnectionStatus: {},
+        peerVideoMetadata: {},
+        peerStreamObj: {},
     };
 
     constructor(props) {
@@ -139,6 +142,16 @@ class PeersProvider extends Component {
             console.log(`actually closed my connection with ${peerId}. Replying this information back to him.`);
             cb();
         });
+
+        this.socket.on(VIDEO_METADATA, ({ peerId, videoMetadata }) => {
+            console.log(`got video metadata from ${peerId} - `, videoMetadata);
+            this.setState(prevState => ({
+                peerVideoMetadata: {
+                    ...prevState.peerVideoMetadata,
+                    [peerId]: videoMetadata
+                }
+            }));
+        });
     }
 
     joinRoom() {
@@ -187,6 +200,7 @@ class PeersProvider extends Component {
 
         console.log(`adding a new peer ${peerId}`);
         // todo: add turn server config
+        // first look at the default config and things on top of it
         // for sending video streams
         const sender = new Peer({ initiator: true });
         sender.on('signal', data => {
@@ -270,8 +284,18 @@ class PeersProvider extends Component {
                 this.reEstablishPeerConnection(peerId);
             }
         });
+        receiver.on('stream', streamObj => {
+            console.log(`got video streamObj from ${peerId} - `, streamObj);
+            this.setState(prevState => ({
+                peerStreamObj: {
+                    ...prevState.peerStreamObj,
+                    [peerId]: streamObj
+                }
+            }));
+        });
         // todo: handle/ log the "error" events
         this.peerConnections[peerId] = { sender, receiver };
+        this.sendVideoToPeer(peerId);
     }
 
     removePeer(peerId,
@@ -302,6 +326,9 @@ class PeersProvider extends Component {
             // from connection status tracking
             this.removePeerConnectionStatusState(peerId);
         }
+
+        // remove peer video metadata and stream object
+        this.removePeerVideoData(peerId);
 
         console.log(`closing peer connection with peer ${peerId}`);        
         const { sender, receiver } = this.peerConnections[peerId];
@@ -405,10 +432,59 @@ class PeersProvider extends Component {
         });
     }
 
+    removePeerVideoData(peerId) {
+        // remove video metadata and stream object corresponding to peerId
+        this.setState(prevState => {
+            const {
+                peerVideoMetadata,
+                peerStreamObj
+            } = prevState;
+            const newPeerVideoMetadata = { ...peerVideoMetadata };
+            delete newPeerVideoMetadata[peerId];
+            const newPeerStreamObj = { ...peerStreamObj };
+            delete newPeerStreamObj[peerId];
+            return ({
+                peerVideoMetadata: newPeerVideoMetadata,
+                peerStreamObj: newPeerStreamObj,
+            });
+        });
+    }
+
+    sendVideoToPeer(peerId) {
+        const { showLoading, showError, stream } = this.props.selfVideo;
+        let streamMetadata = null;
+        let streamObj = null;
+        if (stream) {
+            const { hasAudio, hasVideo } = stream;
+            streamMetadata = { hasAudio, hasVideo };
+            streamObj = stream.streamObj;
+        }
+        const videoMetadata = {
+            showLoading,
+            showError,
+            stream: streamMetadata,
+        };
+        // send the video metadata
+        this.socket.emit(VIDEO_METADATA, { peerId, videoMetadata });
+        if (streamObj) {
+            // send the stream object
+            this.peerConnections[peerId].sender.addStream(streamObj);
+        }
+    }
+
+    sendVideoToAllPeers() {
+        Object.keys(this.peerConnections).forEach(peerId => {
+            this.sendVideoToPeer(peerId);
+        });
+    }
+
     componentDidUpdate(prevProps) {
         if (this.props.roomName !== prevProps.roomName) {
             // room changed. join the new room
             this.joinRoom();
+        }
+        if (this.props.selfVideo !== prevProps.selfVideo) {
+            this.sendVideoToAllPeers();
         }
     }
 
@@ -423,7 +499,8 @@ PeersProvider.propTypes = {
 };
 
 PeersProvider.defaultProps = {
-    roomName: 'test-1'
+    roomName: 'test-1',
+    selfVideo: defaultVideoData,
 };
 
 export default PeersProvider;
