@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { observer } from 'mobx-react';
 import appState from '../stores/AppState';
 import AppUI from '../presentational/App';
 
 import PeersProvider from './PeersProvider';
-import Webcam from '../container/Webcam';
+import Webcam from './Webcam';
+import VideoContainer from './VideoContainer';
 
 @observer
 class AppContainer extends Component {
@@ -23,12 +24,29 @@ class AppContainer extends Component {
         //     />);
         return  (
             <Webcam
-                audio={true}
+                audio={false}
                 video={true}
             >
             {
                 selfVideo =>
-                    <PeersProvider selfVideo={selfVideo}/>
+                    <Fragment>
+                        <PeersProvider selfVideo={selfVideo}>
+                        {
+                            ({ id, isConnected, numConnectionAttempts, peerVideos }) => <Fragment>
+                                <pre>{JSON.stringify({ id, isConnected, numConnectionAttempts, peerVideos }, null, 2)}</pre>
+                                {peerVideos && peerVideos.map(({ peerId, videoData }) =>
+                                    <VideoContainer 
+                                        key={peerId}
+                                        {...videoData}
+                                    />
+                                )}
+                            </Fragment>
+                        }
+                        </PeersProvider>                    
+                        <VideoContainer
+                            {...selfVideo}
+                        />
+                    </Fragment>
             }
             </Webcam>);
     }

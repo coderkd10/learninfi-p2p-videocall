@@ -15,6 +15,7 @@ import { removeInArray } from '../common/utils';
 import { delay } from '../utils/promise-utils';
 import cancelifyPromise, { CANCELED_PROMISE_EXCEPTION_NAME } from '../shared/cancelifyPromise';
 import { connectionStates } from '../constants';
+import stateFormatter from './peer-provider-state-formatter';
 
 // socket.io client events are documented - https://github.com/socketio/socket.io-client/blob/master/docs/API.md
 // todo:
@@ -37,7 +38,7 @@ import { connectionStates } from '../constants';
 // Notes:
 // 1. Two reconnection attempts take around 5 secs. If reconnection fails after 2 attempts show error to the user. 
 
-const SOCKET_IO_SERVER_URL = 'localhost:3500';
+const SOCKET_IO_SERVER_URL = 'e4785511.ngrok.io';
 const PEER_RE_MIN_DELAY = 200; // in ms -> minimum delay to reestablish a peer connection
 
 class PeersProvider extends Component {
@@ -168,14 +169,14 @@ class PeersProvider extends Component {
                 // todo: handle this case appropriately later
                 return;
             }
+            // remove the current peer from the peers list
+            peers = peers.filter(peerId => peerId !== this.socket.id);
             this.setState({
                 isConnected: true,
                 peers,
             });
             peers.forEach(peerId => {
-                if (peerId !== this.socket.id) {
-                    this.addPeer(peerId);
-                }
+                this.addPeer(peerId);
             });
         });
     }
@@ -371,7 +372,7 @@ class PeersProvider extends Component {
         this.peerReconnectionPromises[peerId] = cancelifyPromise(
             delayedPromise
         );
-        console.log(`initiated peer connectiom restablish sequence with ${peerId}. promises - `, {
+        console.log(`initiated peer connection restablish sequence with ${peerId}. promises - `, {
             remoteClosePromise,
             delayedPromise,
             cancelifyed: this.peerReconnectionPromises[peerId]
@@ -491,18 +492,30 @@ class PeersProvider extends Component {
     }
 
     render() {
-        return <pre>{JSON.stringify(this.state, null, 2)}</pre>
+        const { isConnected, numConnectionAttempts } = this.state;
+        let peerVideos = null;
+        if (isConnected) {
+            peerVideos = stateFormatter(this.state);
+        }
+        return this.props.children({
+            id: this.socket.id,
+            isConnected,
+            numConnectionAttempts,
+            peerVideos
+        }) || null;
     }
 }
 
 PeersProvider.propTypes = {
     roomName: PropTypes.string,
     selfVideo: videoData,
+    children: PropTypes.func,
 };
 
 PeersProvider.defaultProps = {
     roomName: 'test-1',
     selfVideo: defaultVideoData,
+    children: () => {},
 };
 
 export default PeersProvider;

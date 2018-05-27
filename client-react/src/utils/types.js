@@ -6,7 +6,7 @@ export const videoData = PropTypes.shape({
     stream: PropTypes.shape({
         hasAudio: PropTypes.bool.isRequired,
         hasVideo: PropTypes.bool.isRequired,
-        streamObj: PropTypes.object.isRequired,
+        streamObj: PropTypes.object,
     }),
 });
 

@@ -16,6 +16,19 @@ const playVideo = (videoElement, stream) => {
     return videoElement.play();
 }
 
+const isStreamsEqual = (stream1, stream2) => {
+    // checks if two streams are shallowly equal
+    if (stream1 === stream2)
+        return true;
+    else if (!stream1 || !stream2) {
+        // either one of them is null but both are not equal
+        return false;
+    }
+    return stream1.hasAudio === stream2.hasAudio &&
+        stream1.hasVideo === stream2.hasVideo &&
+        stream1.streamObj === stream2.streamObj;
+}
+
 class VideoContainer extends Component {
     state = {
         videoLoading: true,
@@ -24,8 +37,12 @@ class VideoContainer extends Component {
         requestAutoplayErrorDialog: false,
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props.stream !== prevProps.stream) {
+    componentDidMount() {
+        this.tryPlayingVideo();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (!isStreamsEqual(this.props.stream, prevProps.stream)) {
             this.tryPlayingVideo();
         }
     }
@@ -39,6 +56,11 @@ class VideoContainer extends Component {
 
     tryPlayingVideo = () => {
         const { showLoading, showError, stream } = this.props;
+        if (!stream) {
+            // if we don't have a stream object then nothing more to do
+            return;
+        }
+
         if (!showLoading && !showError && stream) {
             this.setState({
                 videoLoading: true,
@@ -73,6 +95,13 @@ class VideoContainer extends Component {
         }
     }
 
+    componentWillUnmount() {
+        // cancel pending play promises when this component is about to unmount
+        if (this.playPromise) {
+            this.playPromise.cancel();
+        }
+    }
+
     render() {
         const { showLoading, showError, ...otherProps } = this.props;
         return (
@@ -97,18 +126,20 @@ class VideoContainer extends Component {
 }
 
 VideoContainer.propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    height: PropTypes.number,
     showLoading: PropTypes.bool,
     showError: PropTypes.bool,
     stream: PropTypes.shape({
         hasAudio: PropTypes.bool.isRequired,
         hasVideo: PropTypes.bool.isRequired,
-        streamObj: PropTypes.object.isRequired,
+        streamObj: PropTypes.object,
     }),
 };
 
 VideoContainer.defaultProps = {
+    width: 300,
+    height: 200,
     showLoading: true,
     showError: false,
     stream: null,
