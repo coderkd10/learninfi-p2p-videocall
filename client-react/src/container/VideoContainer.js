@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import VideoPlayer from '../presentational/VideoPlayer';
 import AutoplayErrorContainer from './error/AutoplayErrorContainer';
 import cancelifyPromise, { CANCELED_PROMISE_EXCEPTION_NAME } from '../shared/cancelifyPromise';
+import { isStreamsEqual } from '../utils/media-stream-utils';
 
 const DEFAULT_ASPECT_RATIO = 4/3; //some random default value initially
 
@@ -14,19 +15,6 @@ const playVideo = (videoElement, stream) => {
     }
     videoElement.srcObject = stream.streamObj;
     return videoElement.play();
-}
-
-const isStreamsEqual = (stream1, stream2) => {
-    // checks if two streams are shallowly equal
-    if (stream1 === stream2)
-        return true;
-    else if (!stream1 || !stream2) {
-        // either one of them is null but both are not equal
-        return false;
-    }
-    return stream1.hasAudio === stream2.hasAudio &&
-        stream1.hasVideo === stream2.hasVideo &&
-        stream1.streamObj === stream2.streamObj;
 }
 
 class VideoContainer extends Component {

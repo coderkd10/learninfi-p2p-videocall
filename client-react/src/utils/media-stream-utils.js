@@ -34,3 +34,16 @@ export const createEmptyStream = () => {
         return new window.MediaStream()
     return {};
 }
+
+export const isStreamsEqual = (stream1, stream2) => {
+    // checks if two streams are shallowly equal
+    if (stream1 === stream2)
+        return true;
+    else if (!stream1 || !stream2) {
+        // either one of them is null but both are not equal
+        return false;
+    }
+    return stream1.hasAudio === stream2.hasAudio &&
+        stream1.hasVideo === stream2.hasVideo &&
+        stream1.streamObj === stream2.streamObj;
+}

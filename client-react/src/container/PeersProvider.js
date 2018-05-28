@@ -16,6 +16,7 @@ import { delay } from '../utils/promise-utils';
 import cancelifyPromise, { CANCELED_PROMISE_EXCEPTION_NAME } from '../shared/cancelifyPromise';
 import { connectionStates } from '../constants';
 import stateFormatter from './peer-provider-state-formatter';
+import { isStreamsEqual } from '../utils/media-stream-utils';
 
 // socket.io client events are documented - https://github.com/socketio/socket.io-client/blob/master/docs/API.md
 // todo:
@@ -41,6 +42,12 @@ import stateFormatter from './peer-provider-state-formatter';
 const SOCKET_IO_SERVER_URL = 'localhost:3500';
 const PEER_RE_MIN_DELAY = 200; // in ms -> minimum delay to reestablish a peer connection
 
+const isVideosEqual = (video1, video2) => {
+    // check if two instances of video props are the same
+    return video1.showLoading === video2.showLoading &&
+        video1.showError === video2.showError &&
+        isStreamsEqual(video1.stream, video2.stream);
+}
 class PeersProvider extends Component {
     state = {
         isConnected: false,
@@ -63,6 +70,8 @@ class PeersProvider extends Component {
         this.peerConnections = {};
         // keeps promises for reconnection of peers
         this.peerReconnectionPromises = {};
+        // keeps a reference to previously sent stream
+        this.previouslySentStream = {};
 
         this.socket = io(SOCKET_IO_SERVER_URL);
 
@@ -471,6 +480,9 @@ class PeersProvider extends Component {
         this.socket.emit(VIDEO_METADATA, { peerId, videoMetadata });
         if (streamObj) {
             // send the stream object
+            // sometimes this throws error
+            // todo: add try catch block around this. log this error.
+            // and try and fix it
             this.peerConnections[peerId].sender.addStream(streamObj);
         }
     }
@@ -486,7 +498,7 @@ class PeersProvider extends Component {
             // room changed. join the new room
             this.joinRoom();
         }
-        if (this.props.selfVideo !== prevProps.selfVideo) {
+        if (!isVideosEqual(this.props.selfVideo, prevProps.selfVideo)) {
             this.sendVideoToAllPeers();
         }
     }
