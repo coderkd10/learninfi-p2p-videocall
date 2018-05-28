@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import appState from '../stores/AppState';
 import AppUI from '../presentational/App';

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import PeersArea from './peersArea';
 import ToolsContainer from './ToolsContainer';
-import Webcam from '../container/Webcam';
 import VideoContainer from '../container/VideoContainer';
 import { videoData } from '../utils/types';
 import styles from './App.module.css';
