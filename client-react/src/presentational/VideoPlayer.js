@@ -70,13 +70,14 @@ const VideoPlayer = ({
         }
         {/* we show loading if loading state is set externally
         or we don't have a stream prop yet */}
+        {/* todo: this loader does not look good for very small video container size - handle this */}
         {showLoading || (!showError && !stream) ?
             (<div className={center}>
                 <ScaleLoader 
-                    height={25}
+                    height={0.125*height}
                     margin='2px'
                     radius={2}
-                    width={4}
+                    width={0.02*height}
                 />
             </div>) : null
         }
