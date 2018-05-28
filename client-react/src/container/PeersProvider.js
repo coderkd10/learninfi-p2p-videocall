@@ -39,7 +39,7 @@ import { isStreamsEqual } from '../utils/media-stream-utils';
 // Notes:
 // 1. Two reconnection attempts take around 5 secs. If reconnection fails after 2 attempts show error to the user. 
 
-const SOCKET_IO_SERVER_URL = 'localhost:3500';
+const SOCKET_IO_SERVER_URL = `${window.location.hostname}:3500`;
 const PEER_RE_MIN_DELAY = 200; // in ms -> minimum delay to reestablish a peer connection
 const simplePeerOpts = {
     config: {
