@@ -16,8 +16,7 @@ const App = () =>
     background: '#dbdbdb'
   }}>
     <div className={center}>
-      {/* <AppContainer /> */}
-      <SlickDemo />
+      <AppContainer />
     </div>
   </div>
 

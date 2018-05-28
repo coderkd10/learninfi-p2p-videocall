@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PeersArea from './PeersArea';
+import PeersArea from './peersArea';
 import ToolsContainer from './ToolsContainer';
 import Webcam from '../container/Webcam';
 import VideoContainer from '../container/VideoContainer';
+import { videoData } from '../utils/types';
 import styles from './App.module.css';
 
 const BORDER_SIZE = 1;
@@ -16,6 +17,10 @@ const App = ({
     style,
     captureAudio,
     captureVideo,
+    selfVideo,
+    connectionStatus,
+    isOnline,
+    peerVideos,
     onWebcamButtonClick,
     onMicButtonClick,
 }) => {
@@ -36,31 +41,20 @@ const App = ({
             <PeersArea 
                 width={innerWidth}
                 height={peersAreaHeight}
+                connectionStatus={connectionStatus}
+                isOnline={isOnline}
+                peerVideos={peerVideos}
             />
             <div style={{
                 paddingTop: VIDEO_PADDING,
                 paddingLeft: VIDEO_PADDING,
                 paddingRight: VIDEO_PADDING,
             }}>
-                <Webcam
-                    audio={captureAudio}
-                    video={captureVideo}
-                >
-                {
-                    ({
-                    err,
-                    showLoading,
-                    stream  
-                    }) => (
-                        <VideoContainer
-                            width={videoContainerWidth}
-                            height={videoContainerHeight}
-                            showLoading={showLoading}
-                            showError={Boolean(err)}
-                            stream={stream}
-                        />)
-                }
-                </Webcam>
+                <VideoContainer
+                    width={videoContainerWidth}
+                    height={videoContainerHeight}
+                    {...selfVideo}
+                />
             </div>
             <ToolsContainer
                 width={innerWidth}
@@ -81,6 +75,13 @@ App.propTypes = {
     style: PropTypes.object,
     captureAudio: PropTypes.bool.isRequired,
     captureVideo: PropTypes.bool.isRequired,
+    selfVideo: videoData.isRequired,
+    connectionStatus: PropTypes.string.isRequired,
+    isOnline: PropTypes.bool.isRequired,
+    peerVideos: PropTypes.arrayOf(PropTypes.shape({
+        peerId: PropTypes.string.isRequired,
+        videoData
+    })),
     onWebcamButtonClick: PropTypes.func.isRequired,
     onMicButtonClick: PropTypes.func.isRequired,
 };
