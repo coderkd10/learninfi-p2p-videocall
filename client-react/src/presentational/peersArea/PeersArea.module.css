@@ -10,3 +10,9 @@
     color: #aaa;
     font-weight: 300;
 }
+
+.videoContainer {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
