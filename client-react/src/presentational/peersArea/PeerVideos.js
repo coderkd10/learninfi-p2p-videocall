@@ -1,9 +1,11 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import Slider from "react-slick";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import classNames from 'classnames';
 import VideoContainer from '../../container/VideoContainer';
+import { videoData } from '../../utils/types';
 import './slick-theme-overrides.css';
 import styles from './PeersArea.module.css';
 import { center } from '../../utils/style-utils.module.css';
@@ -74,6 +76,12 @@ const PeerVideos = ({
             </Slider>
         </div>
     </div>)
+};
+
+PeerVideos.propTypes = {
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    peerVideos: PropTypes.arrayOf(videoData),
 };
 
 export default PeerVideos;
