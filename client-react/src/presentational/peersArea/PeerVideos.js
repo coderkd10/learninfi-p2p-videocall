@@ -65,9 +65,9 @@ const PeerVideos = ({
             }}
         >
             <Slider {...slickSettings} slidesToShow={slidesToShow}>
-                {peerVideos.map(({ id, videoData }) =>
+                {peerVideos.map(({ peerId, videoData }) =>
                     <VideoSlide
-                        key={id}
+                        key={peerId}
                         width={innerWidth/slidesToShow}
                         height={innerHeight}
                         {...videoData}
@@ -81,7 +81,10 @@ const PeerVideos = ({
 PeerVideos.propTypes = {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    peerVideos: PropTypes.arrayOf(videoData),
+    peerVideos: PropTypes.arrayOf(PropTypes.shape({
+        peerId: PropTypes.string.isRequired,
+        videoData,
+    })),
 };
 
 export default PeerVideos;
