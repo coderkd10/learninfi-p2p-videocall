@@ -11,6 +11,15 @@ const BORDER_SIZE = 1;
 const TOOLS_CONTAINER_MAX_HEIGHT = 39;
 const VIDEO_PADDING = 5;
 
+const getMainVideo = (lastClickedPeer, peerVideos, selfVideo) => {
+    if (!lastClickedPeer || !peerVideos)
+        return selfVideo;
+    const filtered = peerVideos.filter(({ peerId }) => peerId === lastClickedPeer);
+    if (filtered.length === 0)
+        return selfVideo;
+    return filtered[0].videoData;
+}
+
 const App = ({
     width,
     height,
@@ -21,6 +30,8 @@ const App = ({
     connectionStatus,
     isOnline,
     peerVideos,
+    lastClickedPeer,
+    onPeerVideoClick,
     onWebcamButtonClick,
     onMicButtonClick,
 }) => {
@@ -30,6 +41,9 @@ const App = ({
     const toolsContainerHeight = Math.min(TOOLS_CONTAINER_MAX_HEIGHT, 0.15*innerHeight);
     const videoContainerHeight = innerHeight - (peersAreaHeight + toolsContainerHeight + VIDEO_PADDING);
     const videoContainerWidth = innerWidth - 2*VIDEO_PADDING;
+
+    // to show in the main area
+    const mainVideo = getMainVideo(lastClickedPeer, peerVideos, selfVideo);
 
     return (
         <div className={styles.container} style={{
@@ -44,6 +58,7 @@ const App = ({
                 connectionStatus={connectionStatus}
                 isOnline={isOnline}
                 peerVideos={peerVideos}
+                onPeerVideoClick={onPeerVideoClick}
             />
             <div style={{
                 paddingTop: VIDEO_PADDING,
@@ -53,7 +68,7 @@ const App = ({
                 <VideoContainer
                     width={videoContainerWidth}
                     height={videoContainerHeight}
-                    {...selfVideo}
+                    {...mainVideo}
                 />
             </div>
             <ToolsContainer
@@ -82,6 +97,8 @@ App.propTypes = {
         peerId: PropTypes.string.isRequired,
         videoData
     })),
+    lastClickedPeer: PropTypes.string,
+    onPeerVideoClick: PropTypes.func.isRequired,
     onWebcamButtonClick: PropTypes.func.isRequired,
     onMicButtonClick: PropTypes.func.isRequired,
 };
@@ -90,6 +107,7 @@ App.defaultProps = {
     width: 300,
     height: 364,
     style: {},
+    lastClickedPeer: null,
 };
 
 export default App;

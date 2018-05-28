@@ -7,12 +7,16 @@ const PeersArea = ({
     height,
     connectionStatus,
     isOnline,
-    peerVideos
+    peerVideos,
+    onPeerVideoClick,
 })=> (peerVideos && peerVideos.length >= 2) ?
-    <PeerVideos width={width} height={height} peerVideos={peerVideos} />:
-    <Indicator width={width} height={height}
+    (<PeerVideos width={width} height={height}
+        peerVideos={peerVideos}
+        onPeerVideoClick={onPeerVideoClick}
+    />):
+    (<Indicator width={width} height={height}
         connectionStatus={connectionStatus}
         isOnline={isOnline}
-    />;
+    />);
 
 export default PeersArea;

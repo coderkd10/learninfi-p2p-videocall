@@ -17,6 +17,16 @@ const getConnectionStatus = (isConnected, numAttempts) => {
 
 @observer
 class AppContainer extends Component {
+    state = {
+        lastClickedPeer: null
+    };
+
+    onPeerVideoClick = peerId => {
+        this.setState({
+            lastClickedPeer: peerId,
+        })
+    };
+
     render() {
         return (
             <Webcam
@@ -36,6 +46,8 @@ class AppContainer extends Component {
                             [...peerVideos, { peerId: 'self', videoData: selfVideo }]:
                             null
                         }
+                        lastClickedPeer={this.state.lastClickedPeer}
+                        onPeerVideoClick={this.onPeerVideoClick}
                         onWebcamButtonClick={() => {
                             appState.captureVideo = !appState.captureVideo;
                         }}

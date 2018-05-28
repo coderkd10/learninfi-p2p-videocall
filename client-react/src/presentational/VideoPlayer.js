@@ -46,11 +46,15 @@ const VideoPlayer = ({
     videoAspectRatio,
     showOverlay,
     onOverlayClick,
+    onClick,
 }) => (
-    <div className={styles.videoContainer} style={{
-        width,
-        height,
-    }}>
+    <div className={styles.videoContainer}
+        style={{
+            width,
+            height,
+        }}
+        onClick={onClick}
+    >
         {showError ?
             (<div className={classNames(styles.errorContainer, center)}>
                 <ErrorIcon
@@ -153,6 +157,7 @@ VideoPlayer.propTypes = {
     videoAspectRatio: PropTypes.number,
     showOverlay: PropTypes.bool,
     onOverlayClick: PropTypes.func,
+    onClick: PropTypes.func,
 }
 
 VideoPlayer.defaultProps = {
@@ -163,6 +168,7 @@ VideoPlayer.defaultProps = {
     videoAspectRatio: 4/3,
     showOverlay: false,
     onOverlayClick: () => {},
+    onClick: () => {},
 }
 
 export default VideoPlayer;

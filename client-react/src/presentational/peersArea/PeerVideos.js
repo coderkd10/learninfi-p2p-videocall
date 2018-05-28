@@ -39,6 +39,7 @@ const PeerVideos = ({
     width,
     height,
     peerVideos,
+    onPeerVideoClick,
 }) => {
     const slidesToShow = peerVideos.length >= 3 ? 3: 2;
     const isNavVisible = peerVideos.length > slidesToShow;
@@ -70,6 +71,9 @@ const PeerVideos = ({
                         key={peerId}
                         width={innerWidth/slidesToShow}
                         height={innerHeight}
+                        onClick={() => {
+                            onPeerVideoClick(peerId);
+                        }}
                         {...videoData}
                     />
                 )}
@@ -85,6 +89,7 @@ PeerVideos.propTypes = {
         peerId: PropTypes.string.isRequired,
         videoData,
     })),
+    onPeerVideoClick: PropTypes.func.isRequired,
 };
 
 export default PeerVideos;
