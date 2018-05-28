@@ -11,7 +11,7 @@ import {
     REQUEST_CLOSE_PEER_CONNECTION,
     VIDEO_METADATA,    
 } from '../common/socket-io-events';
-import { removeInArray } from '../common/utils';
+import { removeInArray } from '../utils/common';
 import { delay } from '../utils/promise-utils';
 import cancelifyPromise, { CANCELED_PROMISE_EXCEPTION_NAME } from '../shared/cancelifyPromise';
 import { connectionStates } from '../constants';
@@ -38,7 +38,7 @@ import stateFormatter from './peer-provider-state-formatter';
 // Notes:
 // 1. Two reconnection attempts take around 5 secs. If reconnection fails after 2 attempts show error to the user. 
 
-const SOCKET_IO_SERVER_URL = 'e4785511.ngrok.io';
+const SOCKET_IO_SERVER_URL = 'localhost:3500';
 const PEER_RE_MIN_DELAY = 200; // in ms -> minimum delay to reestablish a peer connection
 
 class PeersProvider extends Component {
