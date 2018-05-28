@@ -41,6 +41,14 @@ import { isStreamsEqual } from '../utils/media-stream-utils';
 
 const SOCKET_IO_SERVER_URL = 'localhost:3500';
 const PEER_RE_MIN_DELAY = 200; // in ms -> minimum delay to reestablish a peer connection
+const simplePeerOpts = {
+    config: {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
+        ]
+    },
+};
 
 const isVideosEqual = (video1, video2) => {
     // check if two instances of video props are the same
@@ -212,7 +220,7 @@ class PeersProvider extends Component {
         // todo: add turn server config
         // first look at the default config and things on top of it
         // for sending video streams
-        const sender = new Peer({ initiator: true });
+        const sender = new Peer({ initiator: true, ...simplePeerOpts });
         sender.on('signal', data => {
             // send this signal to the other peer via socket.io
             this.socket.emit(SIGNAL_DATA, {
@@ -259,7 +267,7 @@ class PeersProvider extends Component {
             }
         });
         // for receiving video streams
-        const receiver = new Peer();
+        const receiver = new Peer({ ...simplePeerOpts });
         receiver.on('signal', data => {
             this.socket.emit(SIGNAL_DATA, {
                 peerId,
