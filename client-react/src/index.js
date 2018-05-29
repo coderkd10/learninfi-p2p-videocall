@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+// right now used a seemingly hacky way to export this video call as a independent
+// react component.
+// todo: try to find out if there are better ways to export
+window.renderVideoCall = (domNode) => 
+    ReactDOM.render(<App />, domNode);
