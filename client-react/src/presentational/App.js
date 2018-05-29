@@ -5,17 +5,24 @@ import ToolsContainer from './ToolsContainer';
 import VideoContainer from '../container/VideoContainer';
 import { videoData } from '../utils/types';
 import styles from './App.module.css';
+import { SELF_PEER_KEY } from '../constants';
 
 const BORDER_SIZE = 1;
 const TOOLS_CONTAINER_MAX_HEIGHT = 39;
 const VIDEO_PADDING = 5;
 
-const getMainVideo = (lastClickedPeer, peerVideos, selfVideo) => {
-    if (!lastClickedPeer || !peerVideos)
-        return selfVideo;
+const getMainVideo = (lastClickedPeer, peerVideos) => {
     const filtered = peerVideos.filter(({ peerId }) => peerId === lastClickedPeer);
-    if (filtered.length === 0)
-        return selfVideo;
+    if (filtered.length === 0) {
+        // can this happen?
+        // todo: think / log the cases when / where this happens
+        if (lastClickedPeer === SELF_PEER_KEY) {
+            // should not happen at all since it => that self video is not present in
+            // peers list
+            throw new Error('Invariant broken : peer videos does not have self video');
+        }
+        return getMainVideo(SELF_PEER_KEY, peerVideos);
+    }
     return filtered[0].videoData;
 }
 
@@ -25,7 +32,6 @@ const App = ({
     style,
     captureAudio,
     captureVideo,
-    selfVideo,
     connectionStatus,
     isOnline,
     peerVideos,
@@ -42,7 +48,7 @@ const App = ({
     const videoContainerWidth = innerWidth - 2*VIDEO_PADDING;
 
     // to show in the main area
-    const mainVideo = getMainVideo(lastClickedPeer, peerVideos, selfVideo);
+    const mainVideo = getMainVideo(lastClickedPeer, peerVideos);
 
     return (
         <div className={styles.container} style={{
@@ -89,14 +95,13 @@ App.propTypes = {
     style: PropTypes.object,
     captureAudio: PropTypes.bool.isRequired,
     captureVideo: PropTypes.bool.isRequired,
-    selfVideo: videoData.isRequired,
     connectionStatus: PropTypes.string.isRequired,
     isOnline: PropTypes.bool.isRequired,
     peerVideos: PropTypes.arrayOf(PropTypes.shape({
         peerId: PropTypes.string.isRequired,
         videoData
-    })),
-    lastClickedPeer: PropTypes.string,
+    })).isRequired,
+    lastClickedPeer: PropTypes.string.isRequired,
     onPeerVideoClick: PropTypes.func.isRequired,
     onWebcamButtonClick: PropTypes.func.isRequired,
     onMicButtonClick: PropTypes.func.isRequired,
@@ -106,7 +111,6 @@ App.defaultProps = {
     width: 300,
     height: 364,
     style: {},
-    lastClickedPeer: null,
 };
 
 export default App;

@@ -6,6 +6,7 @@ import PeersProvider from './PeersProvider';
 import Webcam from './Webcam';
 import OfflineProvider from '../shared/OfflineProvider';
 import { connectionStates } from '../constants';
+import { SELF_PEER_KEY } from '../constants';
 
 const getConnectionStatus = (isConnected, numAttempts) => {
     if (isConnected)
@@ -18,7 +19,7 @@ const getConnectionStatus = (isConnected, numAttempts) => {
 @observer
 class AppContainer extends Component {
     state = {
-        lastClickedPeer: null
+        lastClickedPeer: SELF_PEER_KEY,
     };
 
     onPeerVideoClick = peerId => {
@@ -39,13 +40,15 @@ class AppContainer extends Component {
                     <AppUI
                         captureAudio={appState.captureAudio}
                         captureVideo={appState.captureVideo}
-                        selfVideo={selfVideo}
                         connectionStatus={getConnectionStatus(isConnected, numConnectionAttempts)}
                         isOnline={this.props.isOnline}
-                        peerVideos={peerVideos?
-                            [...peerVideos, { peerId: 'self', videoData: selfVideo }]:
-                            null
-                        }
+                        peerVideos={[
+                            ...(peerVideos || []),
+                            {
+                                peerId: SELF_PEER_KEY,
+                                videoData: selfVideo
+                            },
+                        ]}
                         lastClickedPeer={this.state.lastClickedPeer}
                         onPeerVideoClick={this.onPeerVideoClick}
                         onWebcamButtonClick={() => {
