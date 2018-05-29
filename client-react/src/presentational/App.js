@@ -5,26 +5,10 @@ import ToolsContainer from './ToolsContainer';
 import VideoContainer from '../container/VideoContainer';
 import { videoData } from '../utils/types';
 import styles from './App.module.css';
-import { SELF_PEER_KEY } from '../constants';
 
 const BORDER_SIZE = 1;
 const TOOLS_CONTAINER_MAX_HEIGHT = 39;
 const VIDEO_PADDING = 5;
-
-const getMainVideo = (lastClickedPeer, peerVideos) => {
-    const filtered = peerVideos.filter(({ peerId }) => peerId === lastClickedPeer);
-    if (filtered.length === 0) {
-        // can this happen?
-        // todo: think / log the cases when / where this happens
-        if (lastClickedPeer === SELF_PEER_KEY) {
-            // should not happen at all since it => that self video is not present in
-            // peers list
-            throw new Error('Invariant broken : peer videos does not have self video');
-        }
-        return getMainVideo(SELF_PEER_KEY, peerVideos);
-    }
-    return filtered[0].videoData;
-}
 
 const checkHasAudio = videoData => {
     const { stream } = videoData;
@@ -42,7 +26,7 @@ const App = ({
     connectionStatus,
     isOnline,
     peerVideos,
-    lastClickedPeer,
+    lastClickedPeerIndex,
     onPeerVideoClick,
     onWebcamButtonClick,
     onMicButtonClick,
@@ -54,8 +38,11 @@ const App = ({
     const videoContainerHeight = innerHeight - (peersAreaHeight + toolsContainerHeight + VIDEO_PADDING);
     const videoContainerWidth = innerWidth - 2*VIDEO_PADDING;
 
-    // to show in the main area
-    const mainVideoData = getMainVideo(lastClickedPeer, peerVideos);
+    // video to show in the main area
+    // note: this component assumes that the lastClickedPeerIndex is in the correct range [0, ..., num peers -1]
+    // if this not the case we might get some weird behavior
+    // todo: enforce this invariant somehow in the code and log to the server if it is ever broken.
+    const mainVideoData = peerVideos[lastClickedPeerIndex].videoData;
     const mainHasAudio = checkHasAudio(mainVideoData);
 
     return (
@@ -111,7 +98,7 @@ App.propTypes = {
         peerId: PropTypes.string.isRequired,
         videoData
     })).isRequired,
-    lastClickedPeer: PropTypes.string.isRequired,
+    lastClickedPeerIndex: PropTypes.number.isRequired,
     onPeerVideoClick: PropTypes.func.isRequired,
     onWebcamButtonClick: PropTypes.func.isRequired,
     onMicButtonClick: PropTypes.func.isRequired,

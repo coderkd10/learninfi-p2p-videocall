@@ -19,7 +19,7 @@ const getConnectionStatus = (isConnected, numAttempts) => {
 @observer
 class AppContainer extends Component {
     state = {
-        lastClickedPeer: SELF_PEER_KEY,
+        lastClickedPeer: null, // implies that we haven't clicked on a peer yet
     };
 
     onPeerVideoClick = peerId => {
@@ -27,6 +27,29 @@ class AppContainer extends Component {
             lastClickedPeer: peerId,
         })
     };
+
+    getLastClickedPeerIndex = peerVideos => {
+        const { lastClickedPeer } = this.state;
+        if (!lastClickedPeer) {
+            // no peer was clicked ever
+            // so we'll simply show the first on the list in this case
+            return 0;
+        }
+
+        let i;
+        for(i=0; i < peerVideos.length; i++) {
+            if (peerVideos[i].peerId === lastClickedPeer)
+                break;
+        }
+        if (i < peerVideos.length) {
+            // the peer that was clicked still exists in the peerVideos array
+            return i;
+        }
+        // the peer that was last clicked no longer exists in the peerVideos array
+        // i.e. - it must have been removed from the peer videos array
+        // we'll show the first peer in this case
+        return 0;
+    }
 
     render() {
         return (
@@ -36,20 +59,23 @@ class AppContainer extends Component {
             >
             {selfVideo =>
                 <PeersProvider selfVideo={selfVideo}>
-                {({ isConnected, numConnectionAttempts, peerVideos }) =>
-                    <AppUI
+                {({ isConnected, numConnectionAttempts, peerVideos }) => {
+                    // append self video at the end of peer videos array
+                    peerVideos = [
+                        ...(peerVideos || []),
+                        {
+                            peerId: SELF_PEER_KEY,
+                            videoData: selfVideo
+                        },
+                    ];
+                    
+                    return (<AppUI
                         captureAudio={appState.captureAudio}
                         captureVideo={appState.captureVideo}
                         connectionStatus={getConnectionStatus(isConnected, numConnectionAttempts)}
                         isOnline={this.props.isOnline}
-                        peerVideos={[
-                            ...(peerVideos || []),
-                            {
-                                peerId: SELF_PEER_KEY,
-                                videoData: selfVideo
-                            },
-                        ]}
-                        lastClickedPeer={this.state.lastClickedPeer}
+                        peerVideos={peerVideos}
+                        lastClickedPeerIndex={this.getLastClickedPeerIndex(peerVideos)}
                         onPeerVideoClick={this.onPeerVideoClick}
                         onWebcamButtonClick={() => {
                             appState.captureVideo = !appState.captureVideo;
@@ -57,8 +83,8 @@ class AppContainer extends Component {
                         onMicButtonClick={() => {
                             appState.captureAudio = !appState.captureAudio;
                         }}
-                    />
-                }
+                    />);
+                }}
                 </PeersProvider>
             }
             </Webcam>);
