@@ -26,6 +26,13 @@ const getMainVideo = (lastClickedPeer, peerVideos) => {
     return filtered[0].videoData;
 }
 
+const checkHasAudio = videoData => {
+    const { stream } = videoData;
+    if (!stream)
+        return false;
+    return stream.hasAudio;
+}
+
 const App = ({
     width,
     height,
@@ -48,7 +55,8 @@ const App = ({
     const videoContainerWidth = innerWidth - 2*VIDEO_PADDING;
 
     // to show in the main area
-    const mainVideo = getMainVideo(lastClickedPeer, peerVideos);
+    const mainVideoData = getMainVideo(lastClickedPeer, peerVideos);
+    const mainHasAudio = checkHasAudio(mainVideoData);
 
     return (
         <div className={styles.container} style={{
@@ -73,7 +81,7 @@ const App = ({
                 <VideoContainer
                     width={videoContainerWidth}
                     height={videoContainerHeight}
-                    {...mainVideo}
+                    {...mainVideoData}
                 />
             </div>
             <ToolsContainer
@@ -85,6 +93,8 @@ const App = ({
                 onWebcamButtonClick={onWebcamButtonClick}
                 isMicOn={captureAudio}
                 onMicButtonClick={onMicButtonClick}
+                isVolumeButtonEnabled={mainHasAudio}
+                onVolumeButtonClick={() => {console.log('--> volume button clicked')}}
             />
         </div>);
 };

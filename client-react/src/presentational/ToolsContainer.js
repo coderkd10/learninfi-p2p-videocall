@@ -72,6 +72,7 @@ const getButtonsArray = ({
             }
             className={styles.button}
             style={buttonStyle}
+            onClick={onVolumeButtonClick}
         >
             <Icon Svg={!isVolumeButtonEnabled? VolumeDisabledIcon:
                 isVolumeOn? VolumeMuteIcon: VolumeUpIcon
