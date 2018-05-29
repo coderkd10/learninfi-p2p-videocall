@@ -129,8 +129,8 @@ App.propTypes = {
 };
 
 App.defaultProps = {
-    width: 300,
-    height: 364,
+    width: 298,
+    height: 375,
     style: {},
 };
 
