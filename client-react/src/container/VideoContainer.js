@@ -90,15 +90,20 @@ class VideoContainer extends Component {
         }
     }
 
+    videoRef = ref => {
+        this.video = ref;
+        this.props.videoRef && this.props.videoRef(ref);
+    }
+
     render() {
-        const { showLoading, showError, ...otherProps } = this.props;
+        const { showLoading, showError, videoRef, ...otherProps } = this.props;
         return (
             <Fragment>
                 <VideoPlayer
                     {...otherProps}
                     showLoading={showLoading || (!showError && this.state.videoLoading)}
                     showError={showError}
-                    videoRef={ref => {this.video = ref;}}
+                    videoRef={this.videoRef}
                     videoAspectRatio={this.state.videoAspectRatio}
                     showOverlay={this.state.autoplayError}
                     onOverlayClick={this.tryPlayingVideo}
@@ -123,6 +128,7 @@ VideoContainer.propTypes = {
         hasVideo: PropTypes.bool.isRequired,
         streamObj: PropTypes.object,
     }),
+    videoRef: PropTypes.func,
 };
 
 VideoContainer.defaultProps = {
@@ -131,6 +137,7 @@ VideoContainer.defaultProps = {
     showLoading: true,
     showError: false,
     stream: null,
+    videoRef: null,
 };
 
 export default VideoContainer;

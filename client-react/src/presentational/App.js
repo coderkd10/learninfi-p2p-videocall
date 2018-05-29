@@ -39,6 +39,8 @@ const App = ({
     onMicButtonClick,
     isMutedMap,
     handleTogglePeerVolume,
+    mainVideoRef,
+    onFullScreenButtonClick,
 }) => {
     const innerWidth = width - 2*BORDER_SIZE;
     const innerHeight = height - 2*BORDER_SIZE;
@@ -82,6 +84,7 @@ const App = ({
                     width={videoContainerWidth}
                     height={videoContainerHeight}
                     isMuted={mainIsMuted}
+                    videoRef={mainVideoRef}
                     {...mainVideoData}
                 />
             </div>
@@ -98,7 +101,7 @@ const App = ({
                 isVolumeOn={!mainIsMuted}
                 onVolumeButtonClick={() => handleTogglePeerVolume(mainPeerId)}
                 isFullScreenEnabled={mainHasVideo}
-                onFullScreenButtonClick={() => console.log("--> fullscreen button clicked")}
+                onFullScreenButtonClick={onFullScreenButtonClick}
             />
         </div>);
 };
@@ -121,6 +124,8 @@ App.propTypes = {
     onMicButtonClick: PropTypes.func.isRequired,
     isMutedMap: PropTypes.objectOf(PropTypes.bool).isRequired,
     handleTogglePeerVolume: PropTypes.func.isRequired,
+    mainVideoRef: PropTypes.func.isRequired,
+    onFullScreenButtonClick: PropTypes.func.isRequired,
 };
 
 App.defaultProps = {

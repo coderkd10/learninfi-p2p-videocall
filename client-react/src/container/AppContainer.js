@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
+import screenFull from 'screenfull';
 import appState from '../stores/AppState';
 import AppUI from '../presentational/App';
 import PeersProvider from './PeersProvider';
@@ -63,6 +64,12 @@ class AppContainer extends Component {
         }));
     }
 
+    handleFullScreenButtonClick = () => {
+        if (this.mainVideo) {
+            screenFull.request(this.mainVideo);
+        }
+    }
+
     render() {
         return (
             <Webcam
@@ -97,6 +104,8 @@ class AppContainer extends Component {
                         }}
                         isMutedMap={this.state.isMutedMap}
                         handleTogglePeerVolume={this.togglePeerVolume}
+                        mainVideoRef={ref => {this.mainVideo = ref;}}
+                        onFullScreenButtonClick={this.handleFullScreenButtonClick}
                     />);
                 }}
                 </PeersProvider>

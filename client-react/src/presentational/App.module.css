@@ -2,3 +2,8 @@
     background: white;
     box-sizing: border-box;
 }
+
+/*hide video controls in the fullscreen mode*/
+video::-webkit-media-controls-enclosure {
+    display:none !important;
+}
