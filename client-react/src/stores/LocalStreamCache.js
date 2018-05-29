@@ -39,18 +39,32 @@ export default class LocalStreamCache {
         const hasPrevVideo = hasVideo(currentStream);
         if (audio === hasPrevAudio && video === hasPrevVideo)
             return currentStream;
-        else if ((hasPrevAudio || !audio) && (hasPrevVideo || !video)) {
-            // current stream has required audio / video
-            // just need to remove either (or both)
-            if (hasPrevAudio && !audio) {
-                removeAndStopAudioTrack(currentStream);
-            }
-            if (hasPrevVideo && !video) {
-                removeAndStopVideoTrack(currentStream);
-            }
-            return currentStream;
-        }
-        this.cleanup();
+
+        // note: this bit of code ensure that if we previously
+        // had audio/ video track in the stream and it is no longer required we just stop
+        // and cleanup the track in the stream. But this was causing problems while sending
+        // the stream (on update) to peers. so removed this temporarily.
+        // todo: need to find a good fix for this bug
+
+        // else if ((hasPrevAudio || !audio) && (hasPrevVideo || !video)) {
+        //     // current stream has required audio / video
+        //     // just need to remove either (or both)
+        //     if (hasPrevAudio && !audio) {
+        //         removeAndStopAudioTrack(currentStream);
+        //     }
+        //     if (hasPrevVideo && !video) {
+        //         removeAndStopVideoTrack(currentStream);
+        //     }
+        //     return currentStream;
+        // }
+
+        // don't know why calling clean does not release the web cam light
+        // todo: need to figure out why this happens
+        // this.cleanup();
+        // for now manually calling remove and stop on the stream
+        removeAndStopVideoTrack(currentStream);
+        removeAndStopAudioTrack(currentStream);
+
         return this._init(audio, video);
     }
 }
