@@ -20,7 +20,9 @@ const getConnectionStatus = (isConnected, numAttempts) => {
 class AppContainer extends Component {
     state = {
         lastClickedPeer: null, // implies that we haven't clicked on a peer yet
-        isMutedMap: {}, // keeps track if peer is muted
+        isMutedMap: {
+            [SELF_PEER_KEY]: true, // at the start ensure that self video is muted
+        }, // keeps track if peer is muted
     };
 
     onPeerVideoClick = peerId => {
