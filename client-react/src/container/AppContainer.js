@@ -77,7 +77,7 @@ class AppContainer extends Component {
                 video={appState.captureVideo}
             >
             {selfVideo =>
-                <PeersProvider selfVideo={selfVideo}>
+                <PeersProvider selfVideo={selfVideo} roomName={this.props.roomName}>
                 {({ isConnected, numConnectionAttempts, peerVideos }) => {
                     // append self video at the end of peer videos array
                     peerVideos = [
@@ -114,10 +114,10 @@ class AppContainer extends Component {
     }
 }
 
-const WithOfflineDetection = () => (
+const WithOfflineDetection = props => (
     <OfflineProvider>
     {({ isOnline }) =>
-        <AppContainer isOnline={isOnline} />
+        <AppContainer {...props} isOnline={isOnline} />
     }
     </OfflineProvider>);
 
