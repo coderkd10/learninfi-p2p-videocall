@@ -7,12 +7,14 @@ import PlayIcon from 'react-icons/lib/fa/play';
 import UserIcon from 'react-icons/lib/fa/user';
 import VolumeOffIcon from 'react-icons/lib/md/volume-off';
 import VolumeUpIcon from 'react-icons/lib/md/volume-up';
+import VolumeMuteIcon from 'react-icons/lib/md/volume-mute';
 import computeDimensions from '../utils/size-utils';
 import { center } from '../utils/style-utils.module.css';
 import styles from './VideoPlayer.module.css';
 
 const VolumeIconContainer = ({
     isVolumeOn,
+    isMuted,
     containerWidth,
     containerHeight,
     style
@@ -22,7 +24,8 @@ const VolumeIconContainer = ({
         maxWidth: 0.1*containerWidth,
         maxHeight: 0.35*containerHeight,
     });
-    const Icon = isVolumeOn ? VolumeUpIcon: VolumeOffIcon;
+    const Icon = !isVolumeOn ? VolumeOffIcon:
+                    (isMuted ? VolumeMuteIcon: VolumeUpIcon);
     return (
         <Icon
             className={styles.volumeOffIcon}
@@ -47,6 +50,7 @@ const VideoPlayer = ({
     showOverlay,
     onOverlayClick,
     onClick,
+    isMuted,
 }) => (
     <div className={styles.videoContainer}
         style={{
@@ -121,6 +125,7 @@ const VideoPlayer = ({
                     }}
                 />
                 <video
+                    muted={isMuted}
                     ref={videoRef}
                     className={center}
                     style={{
@@ -134,10 +139,11 @@ const VideoPlayer = ({
                 />
                 <VolumeIconContainer
                     isVolumeOn={stream.hasAudio}
+                    isMuted={isMuted}
                     containerWidth={width}
                     containerHeight={height}
                     style={{
-                        visibility: stream.hasVideo && stream.hasAudio ? 'hidden': 'visible'
+                        visibility: 'visible'
                     }}
                 />
             </div>): null
@@ -158,6 +164,7 @@ VideoPlayer.propTypes = {
     showOverlay: PropTypes.bool,
     onOverlayClick: PropTypes.func,
     onClick: PropTypes.func,
+    isMuted: PropTypes.bool,
 }
 
 VideoPlayer.defaultProps = {
@@ -169,6 +176,7 @@ VideoPlayer.defaultProps = {
     showOverlay: false,
     onOverlayClick: () => {},
     onClick: () => {},
+    isMuted: false,
 }
 
 export default VideoPlayer;
