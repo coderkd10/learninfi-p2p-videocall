@@ -30,6 +30,8 @@ const App = ({
     onPeerVideoClick,
     onWebcamButtonClick,
     onMicButtonClick,
+    isMutedMap,
+    handleTogglePeerVolume,
 }) => {
     const innerWidth = width - 2*BORDER_SIZE;
     const innerHeight = height - 2*BORDER_SIZE;
@@ -42,8 +44,10 @@ const App = ({
     // note: this component assumes that the lastClickedPeerIndex is in the correct range [0, ..., num peers -1]
     // if this not the case we might get some weird behavior
     // todo: enforce this invariant somehow in the code and log to the server if it is ever broken.
+    const mainPeerId = peerVideos[lastClickedPeerIndex].peerId;
     const mainVideoData = peerVideos[lastClickedPeerIndex].videoData;
     const mainHasAudio = checkHasAudio(mainVideoData);
+    const mainIsMuted = Boolean(isMutedMap[mainPeerId]);
 
     return (
         <div className={styles.container} style={{
@@ -59,6 +63,7 @@ const App = ({
                 isOnline={isOnline}
                 peerVideos={peerVideos}
                 onPeerVideoClick={onPeerVideoClick}
+                isMutedMap={isMutedMap}
             />
             <div style={{
                 paddingTop: VIDEO_PADDING,
@@ -68,6 +73,7 @@ const App = ({
                 <VideoContainer
                     width={videoContainerWidth}
                     height={videoContainerHeight}
+                    isMuted={mainIsMuted}
                     {...mainVideoData}
                 />
             </div>
@@ -81,7 +87,8 @@ const App = ({
                 isMicOn={captureAudio}
                 onMicButtonClick={onMicButtonClick}
                 isVolumeButtonEnabled={mainHasAudio}
-                onVolumeButtonClick={() => {console.log('--> volume button clicked')}}
+                isVolumeOn={!mainIsMuted}
+                onVolumeButtonClick={() => handleTogglePeerVolume(mainPeerId)}
             />
         </div>);
 };
@@ -102,6 +109,8 @@ App.propTypes = {
     onPeerVideoClick: PropTypes.func.isRequired,
     onWebcamButtonClick: PropTypes.func.isRequired,
     onMicButtonClick: PropTypes.func.isRequired,
+    isMutedMap: PropTypes.objectOf(PropTypes.bool).isRequired,
+    handleTogglePeerVolume: PropTypes.func.isRequired,
 };
 
 App.defaultProps = {

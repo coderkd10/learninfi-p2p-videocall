@@ -40,6 +40,7 @@ const PeerVideos = ({
     height,
     peerVideos,
     onPeerVideoClick,
+    isMutedMap,
 }) => {
     const slidesToShow = peerVideos.length >= 3 ? 3: 2;
     const isNavVisible = peerVideos.length > slidesToShow;
@@ -74,6 +75,7 @@ const PeerVideos = ({
                         onClick={() => {
                             onPeerVideoClick(peerId);
                         }}
+                        isMuted={Boolean(isMutedMap[peerId])}
                         {...videoData}
                     />
                 )}
@@ -90,6 +92,7 @@ PeerVideos.propTypes = {
         videoData,
     })),
     onPeerVideoClick: PropTypes.func.isRequired,
+    isMutedMap: PropTypes.objectOf(PropTypes.bool).isRequired,
 };
 
 export default PeerVideos;

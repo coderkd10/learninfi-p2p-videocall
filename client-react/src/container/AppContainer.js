@@ -20,6 +20,7 @@ const getConnectionStatus = (isConnected, numAttempts) => {
 class AppContainer extends Component {
     state = {
         lastClickedPeer: null, // implies that we haven't clicked on a peer yet
+        isMutedMap: {}, // keeps track if peer is muted
     };
 
     onPeerVideoClick = peerId => {
@@ -51,6 +52,15 @@ class AppContainer extends Component {
         return 0;
     }
 
+    togglePeerVolume = peerId => {
+        this.setState(prevState => ({
+            isMutedMap: {
+                ...prevState.isMutedMap,
+                [peerId]: !prevState.isMutedMap[peerId],
+            },
+        }));
+    }
+
     render() {
         return (
             <Webcam
@@ -68,7 +78,7 @@ class AppContainer extends Component {
                             videoData: selfVideo
                         },
                     ];
-                    
+
                     return (<AppUI
                         captureAudio={appState.captureAudio}
                         captureVideo={appState.captureVideo}
@@ -83,6 +93,8 @@ class AppContainer extends Component {
                         onMicButtonClick={() => {
                             appState.captureAudio = !appState.captureAudio;
                         }}
+                        isMutedMap={this.state.isMutedMap}
+                        handleTogglePeerVolume={this.togglePeerVolume}
                     />);
                 }}
                 </PeersProvider>
