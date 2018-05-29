@@ -17,6 +17,13 @@ const checkHasAudio = videoData => {
     return stream.hasAudio;
 }
 
+const checkHasVideo = videoData => {
+    const { stream } = videoData;
+    if (!stream)
+        return false;
+    return stream.hasVideo;
+}
+
 const App = ({
     width,
     height,
@@ -47,6 +54,7 @@ const App = ({
     const mainPeerId = peerVideos[lastClickedPeerIndex].peerId;
     const mainVideoData = peerVideos[lastClickedPeerIndex].videoData;
     const mainHasAudio = checkHasAudio(mainVideoData);
+    const mainHasVideo = checkHasVideo(mainVideoData);
     const mainIsMuted = Boolean(isMutedMap[mainPeerId]);
 
     return (
@@ -89,6 +97,8 @@ const App = ({
                 isVolumeButtonEnabled={mainHasAudio}
                 isVolumeOn={!mainIsMuted}
                 onVolumeButtonClick={() => handleTogglePeerVolume(mainPeerId)}
+                isFullScreenEnabled={mainHasVideo}
+                onFullScreenButtonClick={() => console.log("--> fullscreen button clicked")}
             />
         </div>);
 };

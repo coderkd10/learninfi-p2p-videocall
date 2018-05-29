@@ -87,6 +87,7 @@ const getButtonsArray = ({
                 ...buttonStyle,
                 marginRight: 0
             }}
+            onClick={onFullScreenButtonClick}
         >
             <Icon Svg={FullScreenIcon} />
         </button>
