@@ -35,6 +35,7 @@ const getButtonsArray = ({
     isMicOn,
     onMicButtonClick,
     isVolumeButtonEnabled,
+    forceDisableVolumeButton, // force disables the video volume toggle button
     isVolumeOn,
     onVolumeButtonClick,
     isFullScreenEnabled,
@@ -69,7 +70,7 @@ const getButtonsArray = ({
         </button>,
         <button
             key="volume"
-            disabled={!isVolumeButtonEnabled}
+            disabled={!isVolumeButtonEnabled || forceDisableVolumeButton}
             title={!isVolumeButtonEnabled? '':
                 isVolumeOn?
                     "Mute current peer's volume":
@@ -145,6 +146,7 @@ ToolsContainer.propTypes = {
     isMicOn: PropTypes.bool,
     onMicButtonClick: PropTypes.func,
     isVolumeButtonEnabled: PropTypes.bool,
+    forceDisableVolumeButton: PropTypes.bool,
     isVolumeOn: PropTypes.bool,
     onVolumeButtonClick: PropTypes.func,
     isFullScreenEnabled: PropTypes.bool,
@@ -159,6 +161,7 @@ ToolsContainer.defaultProps = {
     isMicOn: true,
     onMicButtonClick: () => {},
     isVolumeButtonEnabled: true,
+    forceDisableVolumeButton: false,
     isVolumeOn: true,
     onVolumeButtonClick: () => {},
     isFullScreenEnabled: true,

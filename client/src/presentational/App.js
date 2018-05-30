@@ -5,6 +5,7 @@ import ToolsContainer from './ToolsContainer';
 import VideoContainer from '../container/VideoContainer';
 import { videoData } from '../utils/types';
 import styles from './App.module.css';
+import { SELF_PEER_KEY } from '../constants';
 
 const BORDER_SIZE = 1;
 const TOOLS_CONTAINER_MAX_HEIGHT = 39;
@@ -98,6 +99,7 @@ const App = ({
                 isMicOn={captureAudio}
                 onMicButtonClick={onMicButtonClick}
                 isVolumeButtonEnabled={mainHasAudio}
+                forceDisableVolumeButton={mainPeerId === SELF_PEER_KEY}
                 isVolumeOn={!mainIsMuted}
                 onVolumeButtonClick={() => handleTogglePeerVolume(mainPeerId)}
                 isFullScreenEnabled={mainHasVideo}

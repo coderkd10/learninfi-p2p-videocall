@@ -6,8 +6,7 @@ import AppUI from '../presentational/App';
 import PeersProvider from './PeersProvider';
 import Webcam from './Webcam';
 import OfflineProvider from '../shared/OfflineProvider';
-import { connectionStates } from '../constants';
-import { SELF_PEER_KEY } from '../constants';
+import { connectionStates, SELF_PEER_KEY } from '../constants';
 
 const getConnectionStatus = (isConnected, numAttempts) => {
     if (isConnected)
