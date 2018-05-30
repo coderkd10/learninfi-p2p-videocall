@@ -1,1 +1,1 @@
-../client-react/src/utils/common.js
+../client/src/utils/common.js
