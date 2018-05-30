@@ -23,3 +23,20 @@
     border: 1px solid #ededed;
     cursor: not-allowed;
 }
+
+.divider {
+    position: relative;
+}
+
+.divider:after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    width: 3px;
+    height: 29px;
+    top: -1px;
+    /* right now hard-coding the right value. todo: somehow compute this value */
+    right: -12.5px;
+    border-radius: 2px;
+    background-color: #787171;
+}

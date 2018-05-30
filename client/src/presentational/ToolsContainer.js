@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import WebcamOnIcon from 'react-icons/lib/md/videocam';
 import WebcamOffIcon from 'react-icons/lib/md/videocam-off';
@@ -16,6 +17,7 @@ const BUTTON_WIDTH = 34;
 const BUTTON_HEIGHT = 29;
 const ICON_SIZE = 16;
 const BUTTONS_SPACING = 5;
+const DIVIDER_EXTRA_SPACE = 15;
 
 const Icon = ({
     Svg
@@ -57,8 +59,11 @@ const getButtonsArray = ({
             key="mic"
             title={isMicOn? 'Turn microphone off': 'Turn microphone on'}
             onClick={onMicButtonClick}
-            className={styles.button}
-            style={buttonStyle}            
+            className={classNames(styles.button, styles.divider)}
+            style={{
+                ...buttonStyle,
+                marginRight: BUTTONS_SPACING + DIVIDER_EXTRA_SPACE,
+            }}
         >
             <Icon Svg={isMicOn? MicOffIcon: MicOnIcon}/>
         </button>,
@@ -103,7 +108,7 @@ const ToolsContainer = ({
 }) => {
     const buttonsArray = getButtonsArray(otherProps);
     const arrayHeight = BUTTON_HEIGHT;
-    const arrayWidth = buttonsArray.length * (BUTTON_WIDTH + BUTTONS_SPACING) - BUTTONS_SPACING;
+    const arrayWidth = buttonsArray.length * (BUTTON_WIDTH + BUTTONS_SPACING) - BUTTONS_SPACING + DIVIDER_EXTRA_SPACE;
     const { width: scaledArrayWidth, height: scaledArrayHeight } = computeDimensions({
         aspectRatio: arrayWidth / arrayHeight,
         maxWidth: width - 2*minHorizontalPadding,
