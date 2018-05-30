@@ -53,7 +53,7 @@ const getButtonsArray = ({
             className={styles.button}
             style={buttonStyle}            
         >
-            <Icon Svg={isWebcamOn? WebcamOffIcon: WebcamOnIcon}/>
+            <Icon Svg={isWebcamOn? WebcamOnIcon: WebcamOffIcon}/>
         </button>,
         <button
             key="mic"
@@ -65,7 +65,7 @@ const getButtonsArray = ({
                 marginRight: BUTTONS_SPACING + DIVIDER_EXTRA_SPACE,
             }}
         >
-            <Icon Svg={isMicOn? MicOffIcon: MicOnIcon}/>
+            <Icon Svg={isMicOn? MicOnIcon: MicOffIcon}/>
         </button>,
         <button
             key="volume"
@@ -80,7 +80,7 @@ const getButtonsArray = ({
             onClick={onVolumeButtonClick}
         >
             <Icon Svg={!isVolumeButtonEnabled? VolumeDisabledIcon:
-                isVolumeOn? VolumeMuteIcon: VolumeUpIcon
+                isVolumeOn? VolumeUpIcon: VolumeMuteIcon
             } />
         </button>,
         <button
