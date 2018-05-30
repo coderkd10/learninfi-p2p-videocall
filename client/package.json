@@ -1,7 +1,9 @@
 {
-  "name": "client-react",
-  "version": "0.1.0",
+  "name": "vcapp-client",
+  "version": "1.0.1",
   "private": true,
+  "description": "react frontend for learninfi's video calling app",
+  "author": "Abhishek Kedia <kedia.abhishek10@gmail.com>",  
   "//": "Added . as homepage to ensure assets are loaded from relative url instead of absolute path as suggested in https://github.com/facebook/create-react-app/issues/527#issuecomment-244793467",
   "homepage": ".",
   "dependencies": {
