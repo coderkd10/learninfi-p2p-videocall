@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Learninfi | Videocall Demo</title>
+    <style>
+      body {
+        background: #dbdbdb;
+      }
+
+      #vc-app {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+      }
+    </style>
+
+    <link rel="stylesheet" href="./vc-app-built/static/css/main.af8e4768.css">
+    <script src="./vc-app-built/static/js/main.6655f907.js"></script>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="vc-app"></div>
+    
+    <script>
+      var roomName = 'test-room-1';
+      // renderVideoCall is example the vc-app js bundle
+      window.renderVideoCall(
+        document.getElementById('vc-app'),
+        roomName
+      );
+    </script>
+  </body>
+</html>
