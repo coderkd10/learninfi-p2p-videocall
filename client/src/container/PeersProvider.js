@@ -46,8 +46,6 @@ const simplePeerOpts = {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
-            { urls: 'turn:video-test.learninfi.com', username : 'vtlrninf_u001', credential : 'a#e23@sfweb2293' },
-            { urls: 'turn:numb.viagenie.ca', username : "kedia.abhishek10@gmail.com", credential : "0xnumbTurn69" },
         ]
     },
 };
