@@ -9,7 +9,7 @@ const {
     REQUEST_CLOSE_PEER_CONNECTION,
     VIDEO_METADATA,
 } = require('../common/socket-io-events');
-const utils = require('../common/utils');
+const utils = require('../client/src/utils/common');
 const io = require('socket.io')();
 
 const rooms = {};
