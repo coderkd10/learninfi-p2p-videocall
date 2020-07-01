@@ -1,4 +1,28 @@
-# Learninfi Video Call
+# Learninfi P2P Video Call Library
+
+## What ?
+
+A lot of websites / applications want to add video calling capability. But is there a simple library that you can just import and have video calling work (without having to write tons of code)?
+
+This project is just that!
+
+This library makes embedding p2p video calling in any web-app very easy. It has 2 components - 
+
+1. React component to add video calling UI (manages most of the grunt work of directly dealing with WebRTC)
+2. Socket.io based signalling server
+
+Both this components are very loosly coupled and you can swap out one while keeping the other very easily.  
+
+Though the UI is made in React, even if you're not using React you can still embed it in your website. Just grab the built js & css files and include them (see [this section](https://github.com/coderkd10/learninfi-p2p-videocall#using-this-as-library) for more details on this).
+
+Also the actual video call between users of your application will be p2p (for most cases see section on turn server for more on this) so you'll not have to invest upfront in setting up some massive server infrastructure and thus cut down cost greatly.
+
+## Why ?
+
+Few years back I was building an online tutoring marketplace [learninfi.com](https://web.archive.org/web/20181201191242/https://www.learninfi.com/lp/) and video calling between tutor and student was a key component. Out the many options I looked at, using WebRTC to have a p2p video call looked the most reasonanble and cost effective option. But trying to directly work with it was very painful and led to lots of headache. Also looking around I could not find a good library / framework to make things easier and iterate faster. So that is why I built this library to make my job easier. Also I developed it with the intention that it can be dropped into any application and have video calling just work!
+
+If you're trying to build something similar do have a look and try this project out. Drop me line at my [email](mailto:kedia.abhishek10@gmail.com) / [twitter](https://twitter.com/kediaabhishek10) if you need some help or just want to chat! 
+
 
 ## Basic Usage
 
