@@ -34,7 +34,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "node-sass": "^4.9.0",
+    "node-sass": "^4.13.1",
     "react-app-rewire-css-modules": "github:codebandits/react-app-rewire-css-modules",
     "react-app-rewire-mobx": "^1.0.8",
     "react-app-rewired": "^1.5.2",
